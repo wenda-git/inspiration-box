@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "本周配单",
+  "navigationBarBackgroundColor": "#FAF6EF",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true
+}

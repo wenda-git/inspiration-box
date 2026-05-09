@@ -1,0 +1,59 @@
+{% extends "_layout.html" %}
+{% block content %}
+<h1 class="text-3xl mb-6">箱型策略</h1>
+
+<div class="grid md:grid-cols-3 gap-6">
+  {% for p in rows %}
+    <div class="bg-white rounded-2xl p-6 min-w-0 {% if not p.is_active %}opacity-50{% endif %}">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-2xl shrink-0">{{ p.emoji }}</span>
+          <div class="min-w-0">
+            <div class="font-medium text-lg">{{ p.name }}</div>
+            <div class="text-xs text-ink-400">{{ p.tagline or p.code }}</div>
+          </div>
+        </div>
+        <span class="px-2 py-0.5 rounded-full text-xs
+          {% if p.theme == 'matcha' %}bg-matcha-500/10 text-matcha-600
+          {% elif p.theme == 'berry'  %}bg-berry-500/10 text-berry-500
+          {% else %}bg-peach-500/10 text-peach-500{% endif %}">{{ p.theme_label }}</span>
+      </div>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-ink-400">用户统一价</span><span class="font-mono">¥{{ '%.0f' % p.price_cny }}/周</span></div>
+        <div class="flex justify-between">
+          <span class="text-ink-400">水果预算</span>
+          <span class="font-mono {% if p.fruit_cost_pct > 55 %}text-peach-500{% endif %}">¥{{ '%.0f' % p.budget_cny }} · {{ '%.1f' % p.fruit_cost_pct }}%</span>
+        </div>
+        <div class="flex justify-between"><span class="text-ink-400">预估履约</span><span class="font-mono">¥{{ '%.0f' % p.estimated_ops_cost_cny }}</span></div>
+        <div class="flex justify-between">
+          <span class="text-ink-400">贡献毛利</span>
+          <span class="font-mono
+            {% if p.margin_state == 'bad' %}text-peach-500
+            {% elif p.margin_state == 'warn' %}text-amber-600
+            {% else %}text-matcha-600{% endif %}">
+            ¥{{ '%.0f' % p.estimated_contribution_cny }} · {{ '%.1f' % p.estimated_contribution_pct }}%
+          </span>
+        </div>
+        <div class="flex justify-between"><span class="text-ink-400">目标克重</span><span class="font-mono">{{ p.box_target_g }}g</span></div>
+      </div>
+
+      <div class="mt-4 border-t border-black/5 pt-3 text-xs">
+        <div class="text-ink-400 mb-2">营养约束</div>
+        {% if p.hard_rules_summary %}
+          <div class="flex flex-wrap gap-2">
+            {% for rule in p.hard_rules_summary %}
+              <span class="px-2 py-1 rounded-full bg-cream-100 text-ink-500">{{ rule }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          <span class="text-ink-400">无硬性限制</span>
+        {% endif %}
+      </div>
+
+      <a href="/admin/plans/{{ p.code }}/edit"
+         class="mt-4 block text-center bg-ink-700 text-cream-50 py-2 rounded-full text-sm hover:bg-black">编辑</a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

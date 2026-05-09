@@ -1,0 +1,54 @@
+<view class="theme-matcha page-padding stack-5">
+  <view wx:if="{{loading}}" class="stack-4">
+    <view class="skeleton" style="height: 240rpx;"></view>
+    <view class="skeleton" style="height: 320rpx;"></view>
+  </view>
+
+  <block wx:else>
+    <view class="order-head">
+      <view>
+        <view class="t-label">{{order.week_text}}</view>
+        <view class="t-h1 t-serif">订单详情</view>
+      </view>
+      <view class="chip chip-brand">{{order.status_label}}</view>
+    </view>
+
+    <view class="card stack-4">
+      <view class="t-label">履约进度</view>
+      <view class="steps">
+        <view wx:for="{{steps}}" wx:key="key" class="{{'step ' + (item.done ? 'done ' : '') + (item.active ? 'active' : '')}}">
+          <view class="step-dot"></view>
+          <view class="step-label">{{item.label}}</view>
+        </view>
+      </view>
+      <view class="timeline-note">
+        <view>锁单：{{order.locked_at_str || '—'}}</view>
+        <view wx:if="{{order.shipped_at_str}}">发货：{{order.shipped_at_str}}</view>
+        <view wx:if="{{order.delivered_at_str}}">签收：{{order.delivered_at_str}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{order.tracking_no}}" class="card stack-2">
+      <view class="t-label">物流</view>
+      <view class="t-h3">{{order.carrier_code || '冷链配送'}}</view>
+      <view class="t-body t-mono">{{order.tracking_no}}</view>
+    </view>
+
+    <view class="card stack-3">
+      <view class="row-between">
+        <view class="t-label">本箱水果</view>
+        <view class="t-body t-mono t-ink">¥{{order.total_cost_cny}}</view>
+      </view>
+      <view wx:for="{{items}}" wx:key="name" class="item-row">
+        <view class="item-emoji">{{item.emoji}}</view>
+        <view class="grow">
+          <view class="t-body t-ink">{{item.name}}</view>
+          <view class="t-caption">{{item.reason || '按本周画像和库存入箱'}}</view>
+        </view>
+        <view class="t-caption">{{item.qty}}g</view>
+      </view>
+    </view>
+
+    <button wx:if="{{order.status === 'delivered'}}" class="btn btn-primary btn-block" bindtap="onFeedback">反馈这箱水果</button>
+  </block>
+</view>

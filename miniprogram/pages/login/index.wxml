@@ -1,0 +1,73 @@
+<view class="theme-matcha login-page">
+
+  <!-- 背景装饰（低饱和漂浮水果） -->
+  <image class="login-bg-deco login-bg-deco-1" src="{{assetBase}}/bg/deco-blueberry.png" mode="aspectFit"/>
+  <image class="login-bg-deco login-bg-deco-2" src="{{assetBase}}/bg/deco-apple.png" mode="aspectFit"/>
+
+  <!-- 顶部 hero 区 · 品牌 Logo -->
+  <view class="login-hero">
+    <image class="login-logo" src="{{assetBase}}/brand/logo-vertical.png" mode="aspectFit"/>
+    <view class="login-slogan">每周一箱，为你而挑</view>
+  </view>
+
+  <!-- 欢迎语 -->
+  <view class="login-intro">
+    <view class="t-display">你好，<text class="t-serif" style="font-style: italic;">新朋友</text></view>
+    <view class="t-body">留个手机号，我给你寄这周最合适的水果。</view>
+  </view>
+
+  <!-- 输入区 -->
+  <view class="login-form">
+    <view class="login-field">
+      <view class="login-field-label">手机号</view>
+      <input
+        class="login-input"
+        type="number"
+        maxlength="11"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+        placeholder="请输入手机号"
+        adjust-position="{{true}}"
+      />
+    </view>
+
+    <view class="login-field">
+      <view class="login-field-row">
+        <view class="login-field-label">验证码</view>
+        <view
+          class="login-send-code {{(cooldown > 0 || sending) ? 'login-send-code-off' : ''}}"
+          bindtap="onSendCode"
+        >
+          {{sending ? '发送中…' : (cooldown > 0 ? cooldown + 's 后重发' : (codeSent ? '重新发送' : '发送验证码'))}}
+        </view>
+      </view>
+      <input
+        class="login-input"
+        type="number"
+        maxlength="6"
+        value="{{code}}"
+        bindinput="onCodeInput"
+        placeholder="6 位数字"
+      />
+    </view>
+  </view>
+
+  <!-- 主按钮 -->
+  <button
+    class="login-btn"
+    bindtap="onLogin"
+    disabled="{{!canLogin}}"
+    loading="{{submitting}}"
+  >
+    {{submitting ? '' : '登录 / 注册'}}
+  </button>
+
+  <!-- 底部协议 -->
+  <view class="login-footer">
+    点击登录即代表你同意
+    <text class="login-footer-link" bindtap="onAgreement">《用户协议》</text>
+    与
+    <text class="login-footer-link" bindtap="onPrivacy">《隐私政策》</text>
+  </view>
+
+</view>

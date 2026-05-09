@@ -1,0 +1,406 @@
+/**
+ * 灵感果仓 · 全局设计语言 v2
+ * 灵感：三顿半 / Oatly / 每日黑巧
+ * 基调：奶油白底 · 水果点缀色 · 大圆角 · 暖阴影 · 衬线标题
+ */
+
+page {
+  /* ========== 颜色 ========== */
+  --vl-bg:      #FAF6EF;              /* 奶油米白主底 */
+  --vl-bg-soft: #F3EDE1;              /* 次底（tab/表单） */
+  --vl-card:    #FFFFFF;              /* 纯白卡 */
+  --vl-card-2:  #FDFBF7;              /* 次级卡 */
+
+  --vl-ink:      #2B2420;             /* 主文字（不是纯黑，可可豆色） */
+  --vl-ink-1:    #5B524C;             /* 次文字 */
+  --vl-ink-2:    #8F877F;             /* 说明/占位 */
+  --vl-ink-3:    #C9C0B4;             /* 禁用/分隔 */
+
+  --vl-line:       rgba(43, 36, 32, 0.08);
+  --vl-line-soft:  rgba(43, 36, 32, 0.05);
+
+  /* —— 水果点缀色（三个健康方向直接对应） —— */
+  --vl-matcha:    #6B9E5F;            /* 抹茶绿 · 减脂控糖 */
+  --vl-matcha-1:  #E8F0E1;            /* 抹茶柔底 */
+  --vl-berry:     #8B5CF6;            /* 莓果紫 · 孕产营养 */
+  --vl-berry-1:   #EFE7FE;
+  --vl-peach:     #F37C3C;            /* 桃橙 · 抗氧轻食 */
+  --vl-peach-1:   #FCE5D4;
+  --vl-cream:     #F2C14E;            /* 奶油黄 · 提示/tip */
+  --vl-danger:    #D95A4A;            /* 番茄红 · 警示 */
+
+  /* 默认品牌色（不绑定健康方向时用） */
+  --vl-brand:    var(--vl-matcha);
+  --vl-brand-1:  var(--vl-matcha-1);
+
+  /* ========== 字体 ========== */
+  --vl-font: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+  --vl-font-serif: "Songti SC", "STSong", "Noto Serif SC", "Georgia", serif;
+  --vl-font-mono: "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  /* ========== 栅格 · 4px 基 ========== */
+  --vl-space-1: 4rpx;
+  --vl-space-2: 8rpx;
+  --vl-space-3: 12rpx;
+  --vl-space-4: 16rpx;
+  --vl-space-5: 24rpx;
+  --vl-space-6: 32rpx;
+  --vl-space-7: 48rpx;
+  --vl-space-8: 64rpx;
+
+  /* ========== 圆角 · 偏大 ========== */
+  --vl-r-sm:   12rpx;
+  --vl-r-md:   20rpx;
+  --vl-r-lg:   32rpx;
+  --vl-r-xl:   44rpx;
+  --vl-r-pill: 999rpx;
+
+  /* ========== 阴影 · 暖色系 ========== */
+  --vl-shadow-sm:   0 2rpx 6rpx   rgba(184, 148, 100, 0.08);
+  --vl-shadow-md:   0 10rpx 28rpx rgba(184, 148, 100, 0.12);
+  --vl-shadow-lift: 0 20rpx 48rpx rgba(120, 80, 40, 0.14);
+
+  --vl-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  background: var(--vl-bg);
+  color: var(--vl-ink);
+  font-family: var(--vl-font);
+  font-size: 28rpx;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* ============ 文本 ============ */
+.t-display {
+  font-family: var(--vl-font-serif);
+  font-size: 72rpx;
+  line-height: 1.12;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--vl-ink);
+}
+.t-h1 {
+  font-family: var(--vl-font-serif);
+  font-size: 52rpx;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.t-h2 {
+  font-size: 36rpx;
+  line-height: 1.3;
+  font-weight: 600;
+}
+.t-h3 {
+  font-size: 30rpx;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.t-body {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--vl-ink-1);
+}
+.t-caption {
+  font-size: 23rpx;
+  line-height: 1.5;
+  color: var(--vl-ink-2);
+  letter-spacing: 0.04em;
+}
+.t-label {
+  font-size: 22rpx;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--vl-ink-2);
+  text-transform: uppercase;
+}
+.t-mono {
+  font-family: var(--vl-font-mono);
+  font-feature-settings: "tnum";
+}
+.t-serif  { font-family: var(--vl-font-serif); }
+.t-ink    { color: var(--vl-ink); }
+.t-muted  { color: var(--vl-ink-2); }
+.t-brand  { color: var(--vl-brand); }
+.t-matcha { color: var(--vl-matcha); }
+.t-berry  { color: var(--vl-berry); }
+.t-peach  { color: var(--vl-peach); }
+.t-danger { color: var(--vl-danger); }
+
+
+/* ============ 卡片 ============ */
+.card {
+  background: var(--vl-card);
+  border-radius: var(--vl-r-lg);
+  padding: var(--vl-space-6);
+  box-shadow: var(--vl-shadow-sm);
+  transition: transform 260ms var(--vl-ease),
+              box-shadow 260ms var(--vl-ease);
+}
+.card:active {
+  transform: scale(0.985);
+  box-shadow: var(--vl-shadow-md);
+}
+
+/* 幽灵卡：无阴影，只有柔描边 */
+.card-ghost {
+  background: var(--vl-card-2);
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-lg);
+  padding: var(--vl-space-6);
+}
+
+/* 选中态卡（配色主题由各页面覆盖 --vl-brand） */
+.card-selected {
+  background: var(--vl-brand-1);
+  border-radius: var(--vl-r-lg);
+  padding: var(--vl-space-6);
+  box-shadow: var(--vl-shadow-md);
+  position: relative;
+}
+.card-selected::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--vl-r-lg);
+  border: 2rpx solid var(--vl-brand);
+  pointer-events: none;
+}
+
+/* 主题色卡（hero） */
+.card-hero {
+  background: linear-gradient(
+    160deg,
+    var(--vl-brand-1) 0%,
+    var(--vl-card) 80%
+  );
+  border-radius: var(--vl-r-xl);
+  padding: var(--vl-space-7);
+  box-shadow: var(--vl-shadow-lift);
+}
+
+
+/* ============ 按钮 ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vl-space-2);
+  height: 96rpx;
+  padding: 0 var(--vl-space-6);
+  border-radius: var(--vl-r-pill);
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: transform 180ms var(--vl-ease),
+              background 180ms var(--vl-ease);
+  border: 0;
+  line-height: 1;
+}
+.btn::after { border: none; }
+
+.btn-primary {
+  background: var(--vl-ink);                  /* 黑褐主按钮，克制高级 */
+  color: var(--vl-bg);
+}
+.btn-primary:active { transform: scale(0.98); background: #1C1612; }
+
+.btn-brand {
+  background: var(--vl-brand);
+  color: #FFFFFF;
+}
+.btn-brand:active { transform: scale(0.98); filter: brightness(0.94); }
+
+.btn-secondary {
+  background: var(--vl-card);
+  color: var(--vl-ink);
+  border: 1rpx solid var(--vl-line);
+}
+.btn-secondary:active { background: var(--vl-bg-soft); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--vl-ink-1);
+}
+.btn-ghost:active { color: var(--vl-ink); }
+
+.btn-block { width: 100%; }
+.btn-sm { height: 72rpx; font-size: 26rpx; padding: 0 var(--vl-space-5); }
+
+
+/* ============ 输入框 ============ */
+.input {
+  width: 100%;
+  height: 96rpx;
+  padding: 0 var(--vl-space-5);
+  background: var(--vl-card);
+  color: var(--vl-ink);
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-md);
+  font-size: 30rpx;
+  transition: border-color 200ms var(--vl-ease);
+  box-sizing: border-box;
+}
+.input:focus { border-color: var(--vl-brand); }
+
+textarea.input {
+  height: auto;
+  padding: var(--vl-space-4) var(--vl-space-5);
+  line-height: 1.6;
+}
+
+
+/* ============ 标签 Chip ============ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 var(--vl-space-4);
+  background: var(--vl-card);
+  color: var(--vl-ink-1);
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-pill);
+  font-size: 24rpx;
+}
+.chip-active {
+  color: #FFFFFF;
+  background: var(--vl-ink);
+  border-color: var(--vl-ink);
+}
+.chip-brand {
+  color: var(--vl-brand);
+  background: var(--vl-brand-1);
+  border-color: transparent;
+}
+.chip-danger {
+  color: var(--vl-danger);
+  background: #FCE7E3;
+  border-color: transparent;
+}
+.chip-peach {
+  color: var(--vl-peach);
+  background: var(--vl-peach-1);
+  border-color: transparent;
+}
+
+
+/* ============ 分隔线 ============ */
+.divider {
+  height: 1rpx;
+  background: var(--vl-line);
+  margin: var(--vl-space-5) 0;
+}
+.divider-dashed {
+  height: 1rpx;
+  margin: var(--vl-space-5) 0;
+  background-image: linear-gradient(
+    to right,
+    var(--vl-line) 0,
+    var(--vl-line) 50%,
+    transparent 50%,
+    transparent 100%
+  );
+  background-size: 16rpx 1rpx;
+}
+
+
+/* ============ 数据可视化 ============ */
+.bar-track {
+  height: 10rpx;
+  background: var(--vl-bg-soft);
+  border-radius: 5rpx;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--vl-brand);
+  border-radius: 5rpx;
+  transition: width 700ms var(--vl-ease);
+}
+
+.dot {
+  display: inline-block;
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: var(--vl-bg-soft);
+  margin: 3rpx;
+}
+.dot-l1 { background: color-mix(in srgb, var(--vl-brand) 25%, var(--vl-bg-soft)); }
+.dot-l2 { background: color-mix(in srgb, var(--vl-brand) 50%, var(--vl-bg-soft)); }
+.dot-l3 { background: color-mix(in srgb, var(--vl-brand) 75%, var(--vl-bg-soft)); }
+.dot-l4 { background: var(--vl-brand); }
+
+
+/* ============ 水果占位图标 ============ */
+/* 小程序不带实物图时的 fallback：配色圆 + 首字母/emoji */
+.fruit-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  background: var(--vl-brand-1);
+  flex-shrink: 0;
+}
+
+
+/* ============ 布局工具 ============ */
+.page-padding {
+  padding: var(--vl-space-6) var(--vl-space-5) var(--vl-space-8);
+}
+.stack-3 { display: flex; flex-direction: column; gap: var(--vl-space-3); }
+.stack-4 { display: flex; flex-direction: column; gap: var(--vl-space-4); }
+.stack-5 { display: flex; flex-direction: column; gap: var(--vl-space-5); }
+.stack-6 { display: flex; flex-direction: column; gap: var(--vl-space-6); }
+.stack-7 { display: flex; flex-direction: column; gap: var(--vl-space-7); }
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--vl-space-3);
+}
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vl-space-3);
+}
+.row-top-between {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--vl-space-3);
+}
+.grow { flex: 1; }
+.wrap { flex-wrap: wrap; }
+
+
+/* ============ 主题色上下文 ============ */
+/* 页面/组件用 class 切换整体主题，内部所有 var(--vl-brand) 自动跟随 */
+.theme-matcha { --vl-brand: var(--vl-matcha); --vl-brand-1: var(--vl-matcha-1); }
+.theme-berry  { --vl-brand: var(--vl-berry);  --vl-brand-1: var(--vl-berry-1); }
+.theme-peach  { --vl-brand: var(--vl-peach);  --vl-brand-1: var(--vl-peach-1); }
+
+
+/* ============ 骨架屏 ============ */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--vl-bg-soft) 0%,
+    #EBE4D6 50%,
+    var(--vl-bg-soft) 100%
+  );
+  background-size: 200% 100%;
+  animation: vl-shimmer 1400ms linear infinite;
+  border-radius: var(--vl-r-md);
+}
+@keyframes vl-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+/* ============ 小程序底栏/顶栏覆盖 ============ */
+button[disabled] { opacity: 0.4; }

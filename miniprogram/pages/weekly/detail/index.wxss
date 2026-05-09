@@ -1,0 +1,926 @@
+.detail-page {
+  min-height: 100vh;
+  padding: 36rpx 28rpx calc(190rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(255, 255, 255, 0.95), rgba(250, 246, 239, 0) 32%),
+    linear-gradient(180deg, #FBF7EF 0%, #F7F0E5 100%);
+}
+
+.detail-bg-leaf {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0.24;
+  z-index: 0;
+}
+.detail-bg-leaf-1 {
+  width: 310rpx;
+  height: 310rpx;
+  right: -74rpx;
+  top: 112rpx;
+  transform: rotate(-12deg);
+}
+.detail-bg-leaf-2 {
+  width: 240rpx;
+  height: 240rpx;
+  left: -96rpx;
+  bottom: 420rpx;
+  opacity: 0.16;
+}
+
+.detail-brand,
+.detail-top,
+.greeting-card,
+.fit-card,
+.learning-card,
+.preview-promise,
+.nutrition-card,
+.order-status-card,
+.bonus-card,
+.card,
+.card-ghost,
+.stack-4,
+.stack-5 {
+  position: relative;
+  z-index: 1;
+}
+
+.detail-brand {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28rpx;
+}
+.detail-logo {
+  width: 300rpx;
+  height: 88rpx;
+}
+
+.detail-top {
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+.detail-title {
+  font-family: var(--vl-font-serif);
+  font-size: 54rpx;
+  line-height: 1.12;
+  color: var(--vl-ink);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.detail-sub {
+  max-width: 620rpx;
+  font-size: 27rpx;
+  line-height: 1.55;
+  color: #635951;
+}
+.detail-badges {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14rpx;
+}
+.detail-badge {
+  height: 78rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid rgba(120, 103, 78, 0.18);
+  background: rgba(255, 253, 248, 0.76);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  color: var(--vl-ink);
+  font-size: 27rpx;
+  font-weight: 600;
+}
+.detail-badge text {
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(91, 145, 79, 0.42);
+  color: #5E914F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+}
+.detail-box-card {
+  position: relative;
+  min-height: 438rpx;
+  border-radius: 34rpx;
+  overflow: hidden;
+  background: linear-gradient(136deg, rgba(255,255,255,0.94) 0%, rgba(252,248,241,0.88) 52%, rgba(239,229,211,0.72) 100%);
+  border: 2rpx solid rgba(255,255,255,0.86);
+  box-shadow: 0 16rpx 34rpx rgba(140, 103, 58, 0.13);
+}
+.detail-box-card::after {
+  content: "";
+  position: absolute;
+  inset: 10rpx;
+  border-radius: 28rpx;
+  border: 1rpx solid rgba(133, 112, 82, 0.08);
+  pointer-events: none;
+}
+.detail-box-leaf {
+  position: absolute;
+  right: -44rpx;
+  top: -50rpx;
+  width: 250rpx;
+  height: 250rpx;
+  opacity: 0.18;
+}
+.detail-box-copy {
+  position: absolute;
+  left: 34rpx;
+  top: 42rpx;
+  width: 300rpx;
+  z-index: 2;
+}
+.detail-box-kicker {
+  display: inline-flex;
+  padding: 12rpx 20rpx;
+  border-radius: 12rpx;
+  background: rgba(232, 240, 225, 0.82);
+  color: #5E914F;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+.detail-box-title {
+  margin-top: 34rpx;
+  font-family: var(--vl-font-serif);
+  font-size: 48rpx;
+  line-height: 1.16;
+  color: var(--vl-ink);
+}
+.detail-box-desc {
+  margin-top: 18rpx;
+  font-size: 27rpx;
+  line-height: 1.46;
+  color: #635951;
+}
+.detail-box-price {
+  margin-top: 30rpx;
+  font-family: var(--vl-font-mono);
+  font-size: 48rpx;
+  line-height: 1;
+  color: #5E914F;
+  font-weight: 700;
+}
+.detail-box-price text {
+  font-family: var(--vl-font);
+  font-size: 26rpx;
+  font-weight: 500;
+}
+.detail-box-img {
+  position: absolute;
+  right: -46rpx;
+  bottom: -4rpx;
+  width: 470rpx;
+  height: 352rpx;
+  z-index: 1;
+}
+
+/* 寄语卡（手写风） */
+.greeting-card {
+  background: #FFFDF8;
+  border: 1rpx dashed var(--vl-ink-3);
+  border-radius: var(--vl-r-lg);
+  padding: 48rpx 32rpx;
+  text-align: center;
+  position: relative;
+}
+.greeting-label {
+  font-family: var(--vl-font-serif);
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  letter-spacing: 0.3em;
+  margin-bottom: 24rpx;
+}
+.greeting-text {
+  font-family: var(--vl-font-serif);
+  font-size: 32rpx;
+  line-height: 1.75;
+  color: var(--vl-ink);
+  letter-spacing: 0.03em;
+}
+.greeting-sign {
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  margin-top: 20rpx;
+  font-style: italic;
+}
+
+/* 7 天计划 */
+.daily-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+.daily-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx dashed var(--vl-line);
+}
+.daily-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.daily-day {
+  font-family: var(--vl-font-serif);
+  font-size: 28rpx;
+  color: var(--vl-brand);
+  font-weight: 600;
+  width: 80rpx;
+  flex-shrink: 0;
+  padding-top: 4rpx;
+}
+.daily-items {
+  font-size: 28rpx;
+  color: var(--vl-ink);
+  line-height: 1.5;
+}
+.daily-tip {
+  font-size: 24rpx;
+  color: var(--vl-ink-2);
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+
+/* 订阅 CTA 卡片 */
+.pay-cta {
+  background: linear-gradient(160deg, var(--vl-brand-1) 0%, var(--vl-card) 75%);
+  border-radius: var(--vl-r-xl);
+  padding: var(--vl-space-6);
+  box-shadow: var(--vl-shadow-lift);
+  position: sticky;
+  bottom: 24rpx;
+}
+
+/* Markdown 渲染 · 食用指南 */
+.guide { line-height: 1.7; }
+.guide-h2 {
+  font-family: var(--vl-font-serif);
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--vl-ink);
+  margin-top: 8rpx;
+  letter-spacing: -0.01em;
+}
+.guide-h3 {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--vl-ink);
+  margin-top: 8rpx;
+}
+.guide-p {
+  font-size: 28rpx;
+  color: var(--vl-ink-1);
+  line-height: 1.7;
+}
+.guide-ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+.guide-li {
+  display: flex;
+  gap: 12rpx;
+  align-items: flex-start;
+}
+.guide-bullet {
+  color: var(--vl-brand);
+  font-weight: 600;
+  flex-shrink: 0;
+  line-height: 1.7;
+}
+.guide-li-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: var(--vl-ink-1);
+  line-height: 1.7;
+}
+.guide-bold {
+  font-weight: 600;
+  color: var(--vl-ink);
+}
+
+/* AI 配单等待态 */
+.ai-loading {
+  padding: 32rpx 0;
+  align-items: center;
+}
+.ai-hero {
+  position: relative;
+  width: 220rpx;
+  height: 220rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8rpx;
+}
+.ai-icon {
+  font-size: 96rpx;
+  animation: vl-pulse 1800ms var(--vl-ease) infinite;
+  z-index: 2;
+}
+.ai-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4rpx solid var(--vl-brand);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  animation: vl-spin 2s linear infinite;
+  opacity: 0.6;
+}
+@keyframes vl-pulse {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.15); opacity: 0.85; }
+}
+@keyframes vl-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 订单状态卡（已付款后） */
+.order-status-card {
+  background: linear-gradient(135deg, var(--vl-brand-1) 0%, rgba(255, 253, 248, 0.98) 100%);
+  border-radius: var(--vl-r-lg);
+  padding: 28rpx 32rpx;
+  border: 1rpx solid rgba(91, 145, 79, 0.16);
+  box-shadow: 0 12rpx 28rpx rgba(91, 145, 79, 0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+.order-status-hint {
+  color: var(--vl-ink-1);
+  padding-top: 4rpx;
+}
+
+/* 为什么这样选 · 个性化行 */
+.trace-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+}
+.trace-dot {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: var(--vl-brand);
+  color: #FFFFFF;
+  font-size: 22rpx;
+  line-height: 36rpx;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+/* 试看承诺卡（未付款时 hero 下方） */
+.preview-promise {
+  background: linear-gradient(158deg, #FFFFFF 0%, var(--vl-brand-1) 100%);
+  border-radius: var(--vl-r-xl);
+  padding: 30rpx 28rpx;
+  box-shadow: 0 18rpx 42rpx rgba(91, 145, 79, 0.16);
+  border: 2rpx solid rgba(91, 145, 79, 0.24);
+}
+.preview-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.preview-emoji-row {
+  display: flex;
+  gap: 8rpx;
+  font-size: 48rpx;
+  line-height: 1;
+}
+.preview-badge {
+  height: 46rpx;
+  padding: 0 18rpx;
+  border-radius: var(--vl-r-pill);
+  background: rgba(91, 145, 79, 0.12);
+  color: var(--vl-brand);
+  font-size: 22rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.preview-title {
+  margin-top: 18rpx;
+  color: var(--vl-ink);
+  font-size: 42rpx;
+  line-height: 1.22;
+  font-weight: 600;
+}
+.preview-sub {
+  margin-top: 8rpx;
+  color: var(--vl-ink-1);
+  font-size: 25rpx;
+  line-height: 1.55;
+}
+.preview-price-line {
+  margin-top: 20rpx;
+  padding: 20rpx 22rpx;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1rpx solid rgba(91, 145, 79, 0.16);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+.preview-price {
+  margin-top: 4rpx;
+  font-family: var(--vl-font-mono);
+  font-size: 46rpx;
+  line-height: 1;
+  color: var(--vl-brand);
+  font-weight: 800;
+}
+.preview-price text {
+  font-family: var(--vl-font);
+  font-size: 22rpx;
+  font-weight: 500;
+}
+.preview-price-note {
+  max-width: 260rpx;
+  color: var(--vl-ink-2);
+  font-size: 23rpx;
+  line-height: 1.45;
+  text-align: right;
+}
+/* 适配理由销售卡 */
+.fit-card {
+  background: rgba(255, 253, 248, 0.96);
+  border-radius: var(--vl-r-xl);
+  padding: 30rpx 32rpx;
+  box-shadow: var(--vl-shadow-md);
+}
+
+/* 营养达成 · 默认紧凑 */
+.nutrition-card {
+  background: rgba(255, 253, 248, 0.96);
+  border-radius: var(--vl-r-lg);
+  padding: 28rpx 30rpx;
+  border: 1rpx solid rgba(150, 124, 87, 0.10);
+  box-shadow: var(--vl-shadow-sm);
+}
+.nutrition-title {
+  margin-top: 4rpx;
+  font-size: 32rpx;
+  color: var(--vl-ink);
+  font-weight: 600;
+}
+.nutrition-toggle {
+  height: 52rpx;
+  padding: 0 20rpx;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-brand-1);
+  color: var(--vl-brand);
+  font-size: 23rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+.nutrition-grid {
+  margin-top: 22rpx;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14rpx;
+}
+.nutrition-metric {
+  min-width: 0;
+  padding: 18rpx;
+  border-radius: 22rpx;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1rpx solid var(--vl-line-soft);
+}
+.nutrition-metric-value {
+  color: var(--vl-ink);
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.nutrition-metric-label {
+  margin-top: 6rpx;
+  color: var(--vl-ink-2);
+  font-size: 21rpx;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.mini-track {
+  margin-top: 12rpx;
+  height: 8rpx;
+}
+.nutrition-full {
+  margin-top: 20rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid var(--vl-line-soft);
+}
+.share-mini {
+  height: 60rpx;
+  padding: 0 22rpx;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-brand-1);
+  color: var(--vl-brand);
+  font-size: 24rpx;
+  font-weight: 600;
+  line-height: 60rpx;
+  margin: 0;
+}
+.share-mini::after { border: none; }
+.fit-grid {
+  margin-top: 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.fit-item {
+  display: flex;
+  gap: 16rpx;
+  align-items: flex-start;
+  padding-bottom: 18rpx;
+  border-bottom: 1rpx solid var(--vl-line-soft);
+}
+.fit-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.fit-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--vl-brand);
+  margin-top: 12rpx;
+  flex-shrink: 0;
+}
+.fit-copy {
+  flex: 1;
+  min-width: 0;
+}
+.fit-title {
+  font-size: 28rpx;
+  color: var(--vl-ink);
+  font-weight: 600;
+}
+.fit-detail {
+  font-size: 23rpx;
+  color: var(--vl-ink-1);
+  line-height: 1.45;
+  margin-top: 4rpx;
+}
+
+.fruit-card {
+  padding: 24rpx;
+}
+.fruit-card .fruit-avatar {
+  width: 86rpx;
+  height: 86rpx;
+  font-size: 42rpx;
+}
+.fruit-meta-row {
+  margin-top: 10rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+}
+.fruit-tag {
+  height: 40rpx;
+  padding: 0 14rpx;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-brand-1);
+  color: var(--vl-brand);
+  font-size: 21rpx;
+  line-height: 40rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.fruit-reason {
+  flex: 1;
+  min-width: 0;
+  color: var(--vl-ink-1);
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+.bonus-card {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(145deg, #FFFDF8 0%, #FFF0E7 100%);
+  border: 1rpx solid rgba(243, 124, 60, 0.18);
+  border-left: 6rpx solid var(--vl-peach);
+  border-radius: var(--vl-r-lg);
+  padding: 28rpx 30rpx;
+  box-shadow: 0 12rpx 30rpx rgba(243, 124, 60, 0.10);
+}
+
+.daily-toggle {
+  margin-top: 4rpx;
+  height: 64rpx;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-brand-1);
+  color: var(--vl-brand);
+  font-size: 25rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 固定底部动作 */
+.detail-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  padding: 18rpx 28rpx calc(18rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(250, 246, 239, 0) 0%, rgba(250, 246, 239, 0.96) 34%, rgba(250, 246, 239, 0.99) 100%);
+  backdrop-filter: blur(16rpx);
+  box-sizing: border-box;
+}
+.bottom-action-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.bottom-action-row .btn {
+  height: 88rpx;
+  box-shadow: 0 12rpx 28rpx rgba(83, 128, 70, 0.16);
+}
+.bottom-secondary {
+  width: 176rpx;
+  flex-shrink: 0;
+  padding: 0 20rpx;
+}
+.bottom-primary {
+  font-size: 30rpx;
+}
+
+.price-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+.price-cell {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-md);
+  padding: 16rpx 10rpx;
+  text-align: center;
+}
+.price-label {
+  font-size: 20rpx;
+  color: var(--vl-ink-2);
+}
+.price-value {
+  margin-top: 4rpx;
+  font-family: var(--vl-font-mono);
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--vl-ink);
+}
+.price-small {
+  font-family: var(--vl-font);
+  font-size: 26rpx;
+}
+
+/* 反馈学习闭环 */
+.learning-card {
+  background: #2B2420;
+  color: #FFFFFF;
+  border-radius: var(--vl-r-lg);
+  padding: 30rpx 32rpx;
+  box-shadow: var(--vl-shadow-md);
+}
+.learning-card .t-label {
+  color: rgba(255, 255, 255, 0.58);
+}
+.learning-card .t-h3 {
+  color: #FFFFFF;
+}
+.learning-summary {
+  margin-top: 8rpx;
+  max-width: 430rpx;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+.learning-badge {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.86);
+  border-radius: var(--vl-r-pill);
+  padding: 10rpx 16rpx;
+  font-size: 22rpx;
+}
+.learning-list {
+  margin-top: 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+.learning-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+.learning-emoji {
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.learning-title {
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+.learning-message {
+  margin-top: 4rpx;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+/* 付款确认弹层 */
+.pay-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.pay-sheet {
+  background: var(--vl-bg);
+  width: 100%;
+  max-width: 750rpx;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 16rpx 32rpx calc(32rpx + env(safe-area-inset-bottom));
+  max-height: 88vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+.pay-sheet-handle {
+  width: 64rpx;
+  height: 6rpx;
+  border-radius: 999rpx;
+  background: var(--vl-ink-3);
+  margin: 0 auto 16rpx;
+}
+.pay-items {
+  margin-top: 20rpx;
+  background: var(--vl-card);
+  border-radius: var(--vl-r-md);
+  padding: 16rpx 20rpx;
+}
+.pay-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 8rpx 0;
+}
+.pay-item-emoji {
+  font-size: 36rpx;
+  width: 48rpx;
+  text-align: center;
+}
+.pay-item-name {
+  color: var(--vl-ink);
+  font-size: 28rpx;
+}
+.pay-divider {
+  height: 1rpx;
+  background: var(--vl-line);
+  margin: 20rpx 0;
+}
+.pay-breakdown {
+  background: var(--vl-card);
+  border-radius: var(--vl-r-md);
+  padding: 20rpx 24rpx;
+}
+.pay-notes {
+  text-align: center;
+  margin-top: 12rpx;
+  color: var(--vl-ink-2);
+  letter-spacing: 0.04em;
+}
+
+.order-status-title {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 4rpx;
+}
+.order-status-icon {
+  width: 40rpx;
+  height: 40rpx;
+  color: var(--vl-brand);
+  flex-shrink: 0;
+}
+
+.daily-tip-mark {
+  display: inline-block;
+  font-size: 20rpx;
+  font-weight: 600;
+  color: var(--vl-brand);
+  background: var(--vl-brand-1);
+  padding: 2rpx 10rpx;
+  border-radius: var(--vl-r-pill);
+  margin-right: 8rpx;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* AI 纯 CSS 呼吸圈动画 */
+.ai-ring-outer {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--vl-brand-1) 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: ai-breathe 2.4s ease-in-out infinite;
+}
+.ai-ring-outer::before,
+.ai-ring-outer::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 2rpx solid var(--vl-brand);
+  opacity: 0.3;
+}
+.ai-ring-outer::before {
+  width: 140rpx;
+  height: 140rpx;
+  animation: ai-pulse 2s ease-in-out infinite;
+}
+.ai-ring-outer::after {
+  width: 180rpx;
+  height: 180rpx;
+  animation: ai-pulse 2s ease-in-out infinite 0.6s;
+}
+.ai-ring-inner {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: var(--vl-brand);
+  box-shadow: 0 0 40rpx rgba(107, 158, 95, 0.6);
+}
+@keyframes ai-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes ai-pulse {
+  0% { transform: scale(0.7); opacity: 0.55; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* AI loading 插画 */
+.ai-loading-illust {
+  width: 360rpx;
+  height: 360rpx;
+  display: block;
+  margin: 0 auto;
+  animation: ai-breathe 3s ease-in-out infinite;
+}
+
+/* hero 卡背景的漂浮水果装饰 */
+.weekly-deco-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.weekly-deco {
+  position: absolute;
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 0;
+}
+.weekly-deco-1 {
+  width: 180rpx; height: 180rpx;
+  top: -40rpx; right: -20rpx;
+  transform: rotate(12deg);
+}
+.weekly-deco-2 {
+  width: 140rpx; height: 140rpx;
+  bottom: -30rpx; left: -20rpx;
+  transform: rotate(-8deg);
+}

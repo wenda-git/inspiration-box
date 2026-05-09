@@ -1,0 +1,75 @@
+<view class="theme-matcha page-padding stack-6">
+
+  <view class="stack-3">
+    <view class="t-label">{{isNew ? 'NEW' : 'EDIT'}}</view>
+    <view class="t-h1 t-serif">{{isNew ? '添加' : '编辑'}}地址</view>
+  </view>
+
+  <view class="card stack-5">
+    <view>
+      <view class="t-label" style="margin-bottom: 12rpx;">收件人</view>
+      <input
+        class="input"
+        value="{{form.receiver_name}}"
+        bindinput="onInput"
+        data-k="receiver_name"
+        placeholder="收件人姓名"
+        maxlength="40"
+      />
+    </view>
+
+    <view>
+      <view class="t-label" style="margin-bottom: 12rpx;">联系电话</view>
+      <input
+        class="input"
+        type="number"
+        maxlength="11"
+        value="{{form.receiver_phone}}"
+        bindinput="onInput"
+        data-k="receiver_phone"
+        placeholder="11 位手机号"
+      />
+    </view>
+
+    <view>
+      <view class="t-label" style="margin-bottom: 12rpx;">省市区</view>
+      <picker mode="region" value="{{regionArr}}" bindchange="onRegionChange">
+        <view class="input row" style="color: {{form.region ? 'var(--vl-ink)' : 'var(--vl-ink-2)'}};">
+          <view class="grow">{{form.region || '点击选择'}}</view>
+          <view class="t-muted">›</view>
+        </view>
+      </picker>
+    </view>
+
+    <view>
+      <view class="t-label" style="margin-bottom: 12rpx;">详细地址</view>
+      <textarea
+        class="input"
+        style="height: 140rpx;"
+        value="{{form.detail}}"
+        bindinput="onInput"
+        data-k="detail"
+        placeholder="街道、门牌号、楼层等"
+        maxlength="200"
+      ></textarea>
+    </view>
+
+    <view class="row-between">
+      <view>
+        <view class="t-body t-ink">设为默认地址</view>
+        <view class="t-caption">下次下单自动使用</view>
+      </view>
+      <switch checked="{{form.is_default}}" bindchange="onToggleDefault" color="#6B9E5F" />
+    </view>
+  </view>
+
+  <button
+    class="btn btn-primary btn-block"
+    bindtap="onSubmit"
+    disabled="{{!canSubmit}}"
+    loading="{{submitting}}"
+  >
+    {{submitting ? '' : '保存'}}
+  </button>
+
+</view>

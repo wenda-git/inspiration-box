@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Bash(psql --version)",
+      "Bash(docker --version)",
+      "Bash(docker run *)",
+      "Bash(docker exec *)",
+      "Bash(break)",
+      "Bash(python3 -m venv .venv)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(openssl rand *)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/vitalens\" JWT_SECRET=\"dev-$\\(openssl rand -hex 16\\)\" SMS_CODE_SALT=\"salt-$\\(openssl rand -hex 16\\)\" .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(tee /tmp/vitalens-uvicorn.log)",
+      "Bash(curl -s http://localhost:8000/healthz)",
+      "Bash(curl *)",
+      "Bash(pkill -f \"uvicorn app.main:app\")",
+      "Bash(ipconfig getifaddr *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(aws bedrock *)",
+      "Bash(python3 -c \"import sys, json; data = json.load\\(sys.stdin\\); [print\\(p['inferenceProfileId']\\) for p in data.get\\('inferenceProfileSummaries', []\\) if 'claude' in p['inferenceProfileId'].lower\\(\\)]\")",
+      "Bash(.venv/bin/pip uninstall *)",
+      "Bash(pkill -f \"uvicorn app.main\")",
+      "Bash(.venv/bin/python3)",
+      "Bash(.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(awk -F'是 ' '{print $2}')"
+    ]
+  }
+}

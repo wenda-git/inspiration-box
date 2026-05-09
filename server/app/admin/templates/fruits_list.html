@@ -1,0 +1,93 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-3xl">水果主档</h1>
+  <a href="/admin/fruits/new" class="bg-ink-700 text-cream-50 px-4 py-2 rounded-full text-sm hover:bg-black">+ 新增水果</a>
+</div>
+
+<form method="get" class="mb-6">
+  <input name="q" value="{{ q }}" placeholder="搜索名称 / 系统编号"
+         class="w-full md:w-96 rounded-full border border-black/10 px-4 py-2 focus:outline-none focus:border-matcha-500">
+</form>
+
+<div class="bg-white rounded-2xl overflow-x-auto">
+  <table class="w-full min-w-[1120px] text-sm">
+    <thead class="bg-cream-100 text-ink-400 text-xs">
+      <tr>
+        <th class="text-left px-4 py-3 w-44">水果</th>
+        <th class="text-left px-4 py-3 w-48">系统编号</th>
+        <th class="text-left px-4 py-3">类别</th>
+        <th class="text-right px-4 py-3">GI</th>
+        <th class="text-right px-4 py-3">糖</th>
+        <th class="text-right px-4 py-3">纤维</th>
+        <th class="text-left px-4 py-3">产地</th>
+        <th class="text-left px-4 py-3 w-48">运营</th>
+        <th class="text-left px-4 py-3 w-36">时令月</th>
+        <th class="text-center px-4 py-3 w-20">状态</th>
+        <th class="px-4 py-3 w-28"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t border-black/5 {% if not r.is_active %}opacity-50{% endif %}">
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2 whitespace-nowrap">
+            <span class="text-xl">{{ r.emoji }}</span>
+            <span>{{ r.name_cn }}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3 font-mono text-xs text-ink-400">{{ r.code }}</td>
+        <td class="px-4 py-3">{{ r.category or '-' }}</td>
+        <td class="px-4 py-3 text-right font-mono">{{ r.gi if r.gi is not none else '-' }}</td>
+        <td class="px-4 py-3 text-right font-mono">{{ '%.1f' % r.sugar_g }}g</td>
+        <td class="px-4 py-3 text-right font-mono">{{ '%.1f' % r.fiber_g }}g</td>
+        <td class="px-4 py-3 text-xs text-ink-500">{{ r.origin or '-' }}</td>
+        <td class="px-4 py-3 text-xs">
+          <div class="flex flex-wrap gap-1">
+            <span class="px-2 py-0.5 rounded-full
+              {% if r.value_tier == 'premium' %}bg-peach-500/10 text-peach-500
+              {% elif r.value_tier == 'highlight' %}bg-matcha-500/10 text-matcha-600
+              {% else %}bg-black/5 text-ink-400{% endif %}">
+              {{ {'basic':'基础','highlight':'亮点','premium':'精品'}.get(r.value_tier, r.value_tier) }}
+            </span>
+            <span class="px-2 py-0.5 rounded-full
+              {% if r.selection_status == 'featured' %}bg-matcha-500/10 text-matcha-600
+              {% elif r.selection_status == 'downranked' %}bg-peach-500/10 text-peach-500
+              {% elif r.selection_status == 'paused' %}bg-black/10 text-ink-500
+              {% else %}bg-black/5 text-ink-400{% endif %}">
+              {{ {'normal':'正常','featured':'主推','downranked':'降权','paused':'暂停'}.get(r.selection_status, r.selection_status) }}
+            </span>
+            {% if r.ops_weight %}
+              <span class="px-2 py-0.5 rounded-full bg-cream-100 text-ink-500">权重 {{ r.ops_weight }}</span>
+            {% endif %}
+          </div>
+          {% if r.allergy_tags %}
+            <div class="mt-1 text-ink-400">过敏：{{ r.allergy_tags | join(',') }}</div>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-xs text-ink-500">
+          {% if r.season_months %}{{ r.season_months | join(',') }} 月{% else %}全年{% endif %}
+        </td>
+        <td class="px-4 py-3 text-center">
+          {% if r.is_active %}
+            <span class="inline-block px-2 py-0.5 rounded-full bg-matcha-500/10 text-matcha-600 text-xs">上架</span>
+          {% else %}
+            <span class="inline-block px-2 py-0.5 rounded-full bg-black/5 text-ink-400 text-xs">下架</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-right whitespace-nowrap">
+          <div class="flex justify-end gap-3">
+            <a href="/admin/fruits/{{ r.code }}/edit" class="text-matcha-600 hover:underline">编辑</a>
+            <form method="post" action="/admin/fruits/{{ r.code }}/toggle" class="inline">
+              <button class="text-ink-400 hover:text-ink-700">{{ '下架' if r.is_active else '上架' }}</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="11" class="text-center py-12 text-ink-400">还没有水果，<a href="/admin/fruits/new" class="text-matcha-600 hover:underline">先加一个</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

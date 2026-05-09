@@ -1,0 +1,38 @@
+<view class="report-page">
+  <view class="report-hero">
+    <image class="report-logo" src="{{assetBase}}/brand/logo-horizontal.png" mode="aspectFit"/>
+    <view class="report-kicker">WEEKLY FRUIT REPORT</view>
+    <view class="report-title">有人生成了自己的<text class="report-serif">本周果箱</text></view>
+    <view class="report-sub">{{planName}} · 按身体状态、口味和本周库存动态搭配</view>
+    <image class="report-illust" src="{{assetBase}}/illustrations/login-hero.png" mode="aspectFit"/>
+  </view>
+
+  <view class="report-card">
+    <view class="t-label">这份报告里的水果</view>
+    <view class="sample-row">
+      <view wx:for="{{sampleItems}}" wx:key="name" class="sample-item">
+        <view class="sample-emoji">{{item.emoji}}</view>
+        <view class="sample-name">{{item.name}}</view>
+        <view class="sample-tag">{{item.tag}}</view>
+      </view>
+    </view>
+    <view wx:if="{{hits.length}}" class="hit-row">
+      <view wx:for="{{hits}}" wx:key="*this" class="hit-chip">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="report-card">
+    <view class="t-label">为什么值得测</view>
+    <view class="reason-list">
+      <view wx:for="{{reasons}}" wx:key="*this" class="reason-row">
+        <view class="reason-check">✓</view>
+        <view class="reason-text">{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="report-actions">
+    <button class="report-primary" bindtap="onStart">生成我的本周果箱</button>
+    <button class="report-secondary" bindtap="onHome">先看看首页</button>
+  </view>
+</view>

@@ -1,0 +1,246 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="mb-6">
+  <a href="/admin/fruits" class="text-sm text-ink-400 hover:text-ink-700">← 返回列表</a>
+  <h1 class="text-3xl mt-2">{{ title }}</h1>
+</div>
+
+{% if error %}
+  <div class="mb-6 rounded-lg bg-red-50 border border-red-500/20 px-4 py-3 text-red-600 text-sm">{{ error }}</div>
+{% endif %}
+
+<form method="post"
+      action="{% if item and item.code %}/admin/fruits/{{ item.code }}/edit{% else %}/admin/fruits/new{% endif %}"
+      class="space-y-6 max-w-5xl">
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">基本信息</h2>
+  <div class="grid md:grid-cols-2 gap-4">
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">系统编号（唯一）</span>
+      <input name="code" value="{{ item.code if item else '' }}"
+             {% if item and item.code %}readonly{% endif %}
+             required class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono {% if item and item.code %}bg-cream-100{% endif %}">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">中文名</span>
+      <input name="name_cn" value="{{ item.name_cn if item else '' }}" required
+             class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">英文名</span>
+      <input name="name_en" value="{{ (item.name_en or '') if item else '' }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">图标</span>
+      <input name="emoji" value="{{ item.emoji if item else '' }}" placeholder="🍎"
+             class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">类别</span>
+      <select name="category" class="w-full rounded-lg border border-black/10 px-3 py-2">
+        <option value="">-</option>
+        {% for c in categories %}
+          <option value="{{ c }}" {% if item and item.category == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">数据来源</span>
+      <input name="source" value="{{ (item.source or '') if item else '' }}"
+             placeholder="中国食物成分表第 6 版"
+             class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6">
+  <h2 class="text-lg mb-4">每 100g 营养（按可食部计）</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {% for key, label in nutrition_fields %}
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">{{ label }}</span>
+      <input name="n_{{ key }}" type="number" step="0.1" min="0"
+             value="{{ (item.nutrition[key] if item and item.nutrition else 0) or 0 }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">分量 + 产地 + 时令</h2>
+  <div class="grid md:grid-cols-3 gap-4">
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">售卖单位</span>
+      <select name="serving_unit" class="w-full rounded-lg border border-black/10 px-3 py-2">
+        {% for u, label in serving_units %}
+          <option value="{{ u }}" {% if item and item.serving_unit == u %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">1 份重量 (g)</span>
+      <input name="serving_size_g" type="number" min="50" step="25"
+             value="{{ item.serving_size_g if item else 500 }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">产地区域</span>
+      <select name="origin_region" class="w-full rounded-lg border border-black/10 px-3 py-2">
+        {% for v, label in origin_regions %}
+          <option value="{{ v }}" {% if item and item.origin_region == v %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">产地详细</span>
+      <input name="origin" value="{{ (item.origin or '') if item else '' }}"
+             placeholder="云南/山东烟台/新西兰"
+             class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <div class="block md:col-span-2">
+      <span class="block text-xs text-ink-400 mb-2">时令月份（不选=全年）</span>
+      <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
+        {% for m, label in month_options %}
+          <label class="inline-flex items-center justify-center gap-2 rounded-lg border border-black/10 px-3 py-2 text-sm hover:border-matcha-500 cursor-pointer">
+            <input type="checkbox" name="season_months" value="{{ m }}"
+                   {% if item and item.season_months and m in item.season_months %}checked{% endif %}
+                   class="accent-matcha-500">
+            <span>{{ label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">算法参数</h2>
+  <div class="grid md:grid-cols-2 gap-4">
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">价值分层</span>
+      <select name="value_tier" class="w-full rounded-lg border border-black/10 px-3 py-2">
+        {% for v, label in value_tiers %}
+          <option value="{{ v }}" {% if item and item.value_tier == v %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <span class="text-xs text-ink-400 mt-1 block">基础走克重，亮点负责体验，精品默认每箱最多 1 种。</span>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">本周运营状态</span>
+      <select name="selection_status" class="w-full rounded-lg border border-black/10 px-3 py-2">
+        {% for v, label in selection_statuses %}
+          <option value="{{ v }}" {% if item and item.selection_status == v %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <span class="text-xs text-ink-400 mt-1 block">暂停选品会直接从正单剔除；主推/降权会影响排序。</span>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">运营权重</span>
+      <input name="ops_weight" type="number" step="1"
+             value="{{ item.ops_weight if item else 0 }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+      <span class="text-xs text-ink-400 mt-1 block">临时加减分，正数主推，负数降权。</span>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">运营备注</span>
+      <input name="ops_note" value="{{ (item.ops_note or '') if item else '' }}"
+             placeholder="本周到货好 / 成本偏高 / 暂停原因"
+             class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+  </div>
+  <div>
+    <div class="text-xs text-ink-400 mb-2">过敏标签</div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+      {% for code, label in allergy_tag_options %}
+        <label class="inline-flex items-center gap-2 rounded-lg border border-black/10 px-3 py-2 text-sm hover:border-matcha-500 cursor-pointer">
+          <input type="checkbox" name="allergy_tags" value="{{ code }}"
+                 {% if item and item.allergy_tags and code in item.allergy_tags %}checked{% endif %}
+                 class="accent-matcha-500">
+          <span>{{ label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <span class="text-xs text-ink-400 mt-1 block">用户过敏项会同时匹配水果系统编号和这些标签。</span>
+  </div>
+  <div>
+    <div class="text-xs text-ink-400 mb-2">方向亲和度</div>
+    <div class="grid md:grid-cols-3 gap-4">
+      {% for direction, direction_label in direction_options %}
+        <label class="block">
+          <span class="block text-xs text-ink-400 mb-1">{{ direction_label }}</span>
+          <select name="affinity_{{ direction }}" class="w-full rounded-lg border border-black/10 px-3 py-2">
+            {% set current = item['affinity_' ~ direction] if item else 0 %}
+            {% for value, label in affinity_options %}
+              <option value="{{ value }}" {% if current == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      {% endfor %}
+    </div>
+    <span class="text-xs text-ink-400 mt-1 block">控制这个水果在不同健康方向里的优先级，运营只需要选档位。</span>
+  </div>
+  <div>
+    <div class="text-xs text-ink-400 mb-2">禁忌方向</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+      {% for code, label in direction_options %}
+        <label class="inline-flex items-center gap-2 rounded-lg border border-black/10 px-3 py-2 text-sm hover:border-matcha-500 cursor-pointer">
+          <input type="checkbox" name="forbidden_for" value="{{ code }}"
+                 {% if item and item.forbidden_for and code in item.forbidden_for %}checked{% endif %}
+                 class="accent-matcha-500">
+          <span>{{ label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <span class="text-xs text-ink-400 mt-1 block">勾选后，这个方向永远不会推荐该水果。</span>
+  </div>
+  <div>
+    <div class="text-xs text-ink-400 mb-2">营养标签</div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+      {% for code, label in common_tag_options %}
+        <label class="inline-flex items-center gap-2 rounded-lg border border-black/10 px-3 py-2 text-sm hover:border-matcha-500 cursor-pointer">
+          <input type="checkbox" name="tags" value="{{ code }}"
+                 {% if item and item.tags and code in item.tags %}checked{% endif %}
+                 class="accent-matcha-500">
+          <span>{{ label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <label class="block mt-3">
+      <span class="block text-xs text-ink-400 mb-1">额外标签（少用，逗号分隔）</span>
+      <input name="extra_tags"
+             value="{{ (item.extra_tags or '') if item else '' }}"
+             placeholder="只在没有合适选项时填写"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-sm">
+    </label>
+  </div>
+  <details>
+    <summary class="cursor-pointer text-sm text-ink-500">高级设置（一般不用改）</summary>
+    <label class="block mt-3">
+      <span class="block text-xs text-ink-400 mb-1">额外方向亲和度</span>
+      <input name="plan_affinity_json"
+             value='{{ item.plan_affinity_json if item else "{}" }}'
+             placeholder='例如 {"custom": 10}'
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-sm">
+    </label>
+  </details>
+</section>
+
+<section class="bg-white rounded-2xl p-6">
+  <label class="inline-flex items-center gap-3">
+    <input type="checkbox" name="is_active"
+           {% if item is none or item.is_active %}checked{% endif %}
+           class="w-4 h-4 accent-matcha-500">
+    <span>上架（可参与选品）</span>
+  </label>
+</section>
+
+<div class="flex items-center gap-3">
+  <button class="bg-ink-700 text-cream-50 px-6 py-2.5 rounded-full hover:bg-black">保存</button>
+  <a href="/admin/fruits" class="text-ink-400 hover:text-ink-700">取消</a>
+</div>
+
+</form>
+{% endblock %}

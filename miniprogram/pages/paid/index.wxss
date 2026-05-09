@@ -1,0 +1,137 @@
+.paid-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--vl-brand-1) 0%, var(--vl-bg) 60%);
+  padding: 48rpx 40rpx 56rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 40rpx;
+}
+
+/* 胜利卡 */
+.paid-hero {
+  text-align: center;
+  padding-top: 32rpx;
+}
+.paid-check {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32rpx;
+}
+.paid-check-circle {
+  width: 136rpx;
+  height: 136rpx;
+  border-radius: 50%;
+  background: var(--vl-brand);
+  color: #FFFFFF;
+  font-size: 72rpx;
+  line-height: 136rpx;
+  box-shadow: 0 20rpx 48rpx rgba(107, 158, 95, 0.35);
+}
+.paid-label {
+  font-size: 24rpx;
+  color: var(--vl-ink-2);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.paid-title {
+  font-family: var(--vl-font-serif);
+  font-size: 64rpx;
+  color: var(--vl-ink);
+  margin-top: 12rpx;
+  line-height: 1.2;
+  font-weight: 500;
+}
+.paid-sub {
+  font-size: 26rpx;
+  color: var(--vl-ink-1);
+  margin-top: 16rpx;
+  letter-spacing: 0.04em;
+}
+
+/* 发货卡 */
+.paid-ship {
+  background: #FFFFFF;
+  border-radius: var(--vl-r-lg);
+  padding: 28rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  box-shadow: var(--vl-shadow-sm);
+}
+.paid-ship-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: var(--vl-brand-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+/* 本周亮点 */
+.paid-highlights {
+  background: #FFFFFF;
+  border-radius: var(--vl-r-lg);
+  padding: 28rpx 24rpx;
+  box-shadow: var(--vl-shadow-sm);
+}
+.paid-highlight-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+.paid-highlight-item {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 8rpx;
+  background: var(--vl-bg-soft);
+  border-radius: var(--vl-r-md);
+}
+.paid-highlight-emoji {
+  font-size: 56rpx;
+  line-height: 1.2;
+}
+.paid-highlight-name {
+  font-size: 24rpx;
+  color: var(--vl-ink);
+  margin-top: 8rpx;
+  font-weight: 500;
+}
+.paid-highlight-qty {
+  font-family: var(--vl-font-mono);
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  margin-top: 2rpx;
+}
+
+/* CTA */
+.paid-ctas {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.paid-check-icon {
+  width: 72rpx;
+  height: 72rpx;
+  color: #FFFFFF;
+}
+.paid-check-circle {
+  /* 覆盖原先放 emoji ✓ 的样式 */
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paid-illustration {
+  width: 380rpx;
+  height: 380rpx;
+  display: block;
+  margin: 0 auto 8rpx;
+}

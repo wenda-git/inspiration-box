@@ -1,0 +1,142 @@
+<view class="q-page">
+  <image class="q-bg-deco q-bg-deco-leaf" src="{{assetBase}}/bg/deco-leaf.png" mode="aspectFit"/>
+  <image class="q-bg-deco q-bg-deco-citrus" src="{{assetBase}}/bg/deco-citrus.png" mode="aspectFit"/>
+  <image class="q-bg-deco q-bg-deco-apple" src="{{assetBase}}/bg/deco-apple.png" mode="aspectFit"/>
+
+  <!-- 顶部：返回 + 进度条 + 百分比 -->
+  <view class="q-topbar">
+    <view class="q-back-txt" bindtap="onBack">‹ {{step > 0 && !showDiagnosis ? '上一题' : '返回'}}</view>
+    <view class="q-progress">
+      <view class="q-progress-fill" style="width: {{progress}}%;"></view>
+    </view>
+    <view class="q-progress-pct">{{progress}}%</view>
+  </view>
+
+
+  <!-- 诊断页 -->
+  <block wx:if="{{showDiagnosis}}">
+    <view class="q-body">
+      <view class="q-title-center">你的本周果箱画像</view>
+
+      <view class="diag-hero">
+        <view class="diag-hero-label">核心定位</view>
+        <view class="diag-hero-title">{{diagnosis.plan_label}}</view>
+      </view>
+
+      <view class="diag-list">
+        <view wx:for="{{diagnosis.bullets}}" wx:key="label" class="diag-row">
+          <view class="diag-label">{{item.label}}</view>
+          <view class="diag-detail">{{item.detail}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="q-footer">
+      <view class="diag-firstpay">登录后将根据实时库存生成本周果箱，支付前可查看完整配单</view>
+      <button class="q-btn q-btn-primary" bindtap="onConfirmDiagnosis"
+              loading="{{submitting}}" disabled="{{submitting}}">
+        <text class="q-btn-text">{{submitting ? '' : '生成我的本周果箱'}}</text>
+      </button>
+    </view>
+  </block>
+
+
+  <!-- 问卷页 -->
+  <block wx:else>
+    <view class="q-body {{currentQ.type === 'multi_grouped' ? 'q-body-compact' : ''}}">
+      <!-- 标题 + why -->
+      <view class="q-title-center">
+        {{currentQ.title}}
+        <view wx:if="{{currentQ.why}}" class="q-why-icon" catchtap="onShowWhy">?</view>
+      </view>
+      <view wx:if="{{currentQ.subtitle}}" class="q-subtitle-center">{{currentQ.subtitle}}</view>
+
+
+      <!-- 性别：两个大圆 -->
+      <view wx:if="{{currentQ.type === 'single_circle'}}" class="q-circles">
+        <view
+          wx:for="{{currentQ.options}}" wx:key="value"
+          class="q-circle {{selectedMap[item.value] ? 'q-circle-on' : ''}}"
+          bindtap="onPickSingle"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- 单选：胶囊列表 -->
+      <view wx:elif="{{currentQ.type === 'single'}}" class="q-pills">
+        <view
+          wx:for="{{currentQ.options}}" wx:key="value"
+          class="q-pill {{selectedMap[item.value] ? 'q-pill-on' : ''}}"
+          bindtap="onPickSingle"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- 多选：胶囊列表 -->
+      <view wx:elif="{{currentQ.type === 'multi'}}" class="q-pills">
+        <view
+          wx:for="{{currentQ.options}}" wx:key="value"
+          class="q-pill {{selectedMap[item.value] ? 'q-pill-on' : ''}}"
+          bindtap="onToggleMulti"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- 多选（分组）：每组标题 + 横排小 chip -->
+      <view wx:elif="{{currentQ.type === 'multi_grouped'}}" class="q-groups">
+        <view
+          wx:for="{{currentQ.option_groups}}" wx:for-item="g" wx:key="group"
+          class="q-group"
+        >
+          <view class="q-group-title">{{g.group}}</view>
+          <view class="q-chips">
+            <view
+              wx:for="{{g.options}}" wx:for-item="opt" wx:key="value"
+              class="q-chip {{selectedMap[opt.value] ? 'q-chip-on' : ''}}"
+              bindtap="onToggleMulti"
+              data-value="{{opt.value}}"
+            >{{opt.label}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 数字输入（身高 / 体重）-->
+      <view wx:elif="{{currentQ.type === 'number'}}" class="q-num-wrap">
+        <view class="q-num-row">
+          <view class="q-num-input-wrap">
+            <input
+              class="q-num-input" type="digit"
+              placeholder="{{currentQ.placeholder}}"
+              value="{{form[currentQ.key]}}"
+              bindinput="onInputNumber"
+              confirm-type="done"
+            />
+            <view class="q-num-unit">{{currentQ.unit}}</view>
+          </view>
+          <view
+            class="q-num-check {{canSubmitNum ? '' : 'q-num-check-disabled'}}"
+            bindtap="onConfirmNumber"
+          >✓</view>
+        </view>
+        <view wx:if="{{weightJin}}" class="q-num-hint">{{weightJin}}</view>
+      </view>
+
+    </view>
+
+    <!-- 多选才需要"下一步" -->
+    <view class="q-footer" wx:if="{{currentQ.type === 'multi' || currentQ.type === 'multi_grouped'}}">
+      <button class="q-btn q-btn-primary" bindtap="onNext">下一步</button>
+    </view>
+  </block>
+
+
+  <!-- Why 弹窗 -->
+  <view wx:if="{{showWhy}}" class="q-mask" catchtap="onHideWhy">
+    <view class="q-why-card" catchtap="">
+      <view class="q-why-title">为什么问？</view>
+      <view class="q-why-text">{{currentQ.why}}</view>
+      <view class="q-why-btn" bindtap="onHideWhy">知道了</view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/weekly/index",
+    "pages/login/index",
+    "pages/weekly/detail/index",
+    "pages/share/report/index",
+    "pages/feedback/index",
+    "pages/feedback/history/index",
+    "pages/profile/index",
+    "pages/onboarding/index",
+    "pages/paid/index",
+    "pages/orders/list/index",
+    "pages/orders/detail/index",
+    "pages/addresses/list/index",
+    "pages/addresses/edit/index"
+  ],
+  "window": {
+    "backgroundColor": "#FAF6EF",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FAF6EF",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "灵感果仓",
+    "navigationStyle": "default"
+  },
+  "tabBar": {
+    "color": "#8F877F",
+    "selectedColor": "#6B9E5F",
+    "backgroundColor": "#FAF6EF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/weekly/index",
+        "text": "本周",
+        "iconPath": "assets/tabbar/tab-home.png",
+        "selectedIconPath": "assets/tabbar/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/feedback/index",
+        "text": "反馈",
+        "iconPath": "assets/tabbar/tab-chat.png",
+        "selectedIconPath": "assets/tabbar/tab-chat-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/tab-profile.png",
+        "selectedIconPath": "assets/tabbar/tab-profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

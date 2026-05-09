@@ -1,0 +1,189 @@
+<view class="theme-matcha page-padding stack-6">
+
+  <!-- 游客模式：欢迎 + 登录卡 -->
+  <view wx:if="{{!isLoggedIn}}" class="card-hero stack-3">
+    <view class="profile-avatar" style="margin-bottom: 8rpx;">
+      <view class="profile-avatar-inner"></view>
+    </view>
+    <view class="t-h2 t-serif">你好，新朋友</view>
+    <view class="t-body">登录后可订阅、查看你的配单和订单历史</view>
+    <button class="btn btn-brand btn-block" style="margin-top: 12rpx;" bindtap="onGoLogin">立即登录 / 注册</button>
+  </view>
+
+  <!-- 已登录：用户卡 -->
+  <view wx:else class="card-hero stack-4">
+    <view class="row" style="gap: 20rpx;">
+      <view class="profile-avatar">
+        <view class="profile-avatar-inner"></view>
+      </view>
+      <view class="grow">
+        <view class="t-h2 t-serif">{{user.nickname || '新朋友'}}</view>
+        <view class="t-body" style="margin-top: 4rpx;">{{maskedPhone}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 订阅状态卡（只登录后） -->
+  <block wx:if="{{isLoggedIn}}">
+    <view wx:if="{{subscription && subscription.billing_state === 'paid'}}" class="card stack-4">
+      <view class="row-between">
+        <view>
+          <view class="t-label">THIS WEEK BOX</view>
+          <view class="t-h3 t-serif" style="margin-top: 4rpx;">{{statusText}} · {{subscription.plan_code === 'fatloss_gi' ? '减脂控糖' : (subscription.plan_code === 'prenatal' ? '孕产营养' : '抗氧轻食')}}</view>
+        </view>
+        <view class="chip chip-brand">第 {{subscription.charge_count}} 期</view>
+      </view>
+      <view class="divider-dashed"></view>
+      <view class="row-between">
+        <view>
+          <view class="t-caption">下次扣费</view>
+          <view class="t-body t-ink">{{nextChargeStr || '—'}}</view>
+        </view>
+        <view style="text-align: right;">
+          <view class="t-caption">每周</view>
+          <view class="t-body t-ink t-mono">¥{{subscription.recurring_cny}}</view>
+        </view>
+      </view>
+      <view class="row" style="gap: 16rpx;">
+        <button class="btn btn-secondary btn-sm grow" bindtap="onSwitchDirection">换个方向</button>
+        <button wx:if="{{subscription.status !== 'paused'}}" class="btn btn-secondary btn-sm grow" bindtap="onPauseSub">暂停一周</button>
+        <button wx:else class="btn btn-secondary btn-sm grow" bindtap="onResumeSub">恢复订阅</button>
+        <button class="btn btn-secondary btn-sm grow" bindtap="onCancelSub">取消订阅</button>
+      </view>
+    </view>
+
+    <view wx:if="{{subscription && subscription.billing_state === 'paid' && milestones.length}}" class="card stack-4">
+      <view class="row-between">
+        <view>
+          <view class="t-label">订阅成就</view>
+          <view class="t-h3 t-serif" style="margin-top: 4rpx;">已陪伴 {{daysSubscribed}} 天</view>
+        </view>
+        <view class="chip chip-brand">{{subscription.charge_count}} 期</view>
+      </view>
+      <view class="stack-3">
+        <view wx:for="{{milestones}}" wx:key="at" class="milestone-row">
+          <view class="milestone-icon {{item.unlocked ? 'unlocked' : 'locked'}}"></view>
+          <view class="grow">
+            <view class="milestone-label">
+              <text>{{item.label}}</text>
+              <text wx:if="{{item.unlocked}}" class="milestone-badge">已解锁</text>
+              <text wx:else class="milestone-countdown">还差 {{item.days_left}} 天</text>
+            </view>
+            <view class="milestone-reward {{item.unlocked ? '' : 'locked'}}">{{item.reward}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:elif="{{subscription && subscription.billing_state === 'unpaid'}}" class="card-hero stack-3">
+      <view class="t-label">PENDING</view>
+      <view class="t-h3 t-serif">本周配单已生成，等你付款</view>
+          <view class="t-caption">首箱 ¥{{firstPayment}}，去本周页面完成订阅</view>
+      <button class="btn btn-brand btn-sm" bindtap="onGoWeekly">去本周</button>
+    </view>
+
+    <view wx:elif="{{!subscription}}" class="card-ghost stack-3">
+      <view class="t-h3 t-serif">还没开始订阅</view>
+      <view class="t-caption">完成问卷后，AI 会每周为你配一箱水果</view>
+      <button class="btn btn-brand btn-sm" bindtap="onGoOnboarding">去完善画像</button>
+    </view>
+
+    <!-- 口味档案 -->
+    <view class="card stack-4">
+      <view class="row-between">
+        <view>
+          <view class="t-label">TASTE PROFILE</view>
+          <view class="t-h3 t-serif" style="margin-top: 4rpx;">我的口味档案</view>
+        </view>
+        <button class="pref-mini-btn" bindtap="onGoFeedback">去反馈</button>
+      </view>
+
+      <view wx:if="{{preferenceCards.length}}" class="preference-grid">
+        <view wx:for="{{preferenceCards}}" wx:key="title" class="preference-card preference-{{item.tone}}">
+          <view class="preference-dot"></view>
+          <view class="preference-title">{{item.title}}</view>
+          <view class="preference-detail">{{item.detail}}</view>
+          <view class="preference-meta">权重 {{item.weight}} · {{item.source_count}} 次反馈</view>
+        </view>
+      </view>
+
+      <view wx:else class="preference-empty">
+        <view class="preference-empty-title">还没有足够反馈</view>
+        <view class="preference-empty-text">吃完后点几下反馈，系统会慢慢学会你的甜酸偏好、分量和不想再吃的水果。</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 换方向弹层 -->
+  <view wx:if="{{showDirectionPicker}}" class="q-mask" catchtap="onCloseDirection">
+    <view class="direction-card" catchtap="">
+      <view class="t-label">换个方向</view>
+      <view class="t-h2 t-serif" style="margin-top: 6rpx;">想让 AI 往哪边走？</view>
+      <view class="t-caption" style="margin-top: 8rpx;">新方向从下周配单起生效</view>
+      <view class="stack-3" style="margin-top: 28rpx;">
+        <view class="direction-opt {{subscription.plan_code === 'fatloss_gi' ? 'direction-opt-current' : ''}}" bindtap="onPickDirection" data-v="fatloss_gi">
+          减脂 / 控糖 {{subscription.plan_code === 'fatloss_gi' ? '· 当前' : ''}}
+        </view>
+        <view class="direction-opt {{subscription.plan_code === 'antiox' ? 'direction-opt-current' : ''}}" bindtap="onPickDirection" data-v="antiox">
+          抗氧 / 抗老 / 免疫 {{subscription.plan_code === 'antiox' ? '· 当前' : ''}}
+        </view>
+        <view wx:if="{{user.gender !== 'male'}}" class="direction-opt {{subscription.plan_code === 'prenatal' ? 'direction-opt-current' : ''}}" bindtap="onPickDirection" data-v="prenatal">
+          孕期 / 备孕 / 哺乳期 {{subscription.plan_code === 'prenatal' ? '· 当前' : ''}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 菜单项（游客只看到"关于/联系客服"） -->
+  <view wx:if="{{isLoggedIn}}" class="card" style="padding: 0;">
+    <view class="menu-item" bindtap="onOrders">
+      <view class="menu-icon-dot"></view>
+      <view class="grow">
+        <view class="t-body t-ink">订单历史</view>
+        <view class="t-caption">你收到过的每一箱水果</view>
+      </view>
+      <view class="t-muted">›</view>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="onAddresses">
+      <view class="menu-icon-dot"></view>
+      <view class="grow">
+        <view class="t-body t-ink">收货地址</view>
+        <view class="t-caption">{{defaultAddr ? defaultAddr.region + ' ' + defaultAddr.detail : '还没设置'}}</view>
+      </view>
+      <view class="t-muted">›</view>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="onFeedbackHistory">
+      <view class="menu-icon-dot"></view>
+      <view class="grow">
+        <view class="t-body t-ink">反馈记录</view>
+        <view class="t-caption">看看 AI 是怎么调整配单的</view>
+      </view>
+      <view class="t-muted">›</view>
+    </view>
+  </view>
+
+  <view class="card" style="padding: 0;">
+    <view class="menu-item" bindtap="onAbout">
+      <view class="menu-icon-dot"></view>
+      <view class="grow">
+        <view class="t-body t-ink">关于 灵感果仓</view>
+      </view>
+      <view class="t-muted">›</view>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="onContact">
+      <view class="menu-icon-dot"></view>
+      <view class="grow">
+        <view class="t-body t-ink">联系客服</view>
+      </view>
+      <view class="t-muted">›</view>
+    </view>
+  </view>
+
+  <button wx:if="{{isLoggedIn}}" class="btn btn-secondary btn-block" bindtap="onLogout">退出登录</button>
+
+  <view class="t-caption" style="text-align: center;">灵感果仓 · v0.1.0</view>
+
+</view>

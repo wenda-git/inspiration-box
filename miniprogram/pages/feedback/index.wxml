@@ -1,0 +1,130 @@
+<view class="theme-matcha page-padding stack-7">
+
+  <!-- loading -->
+  <view wx:if="{{loading}}" class="stack-4">
+    <view class="skeleton" style="height: 160rpx;"></view>
+    <view class="skeleton" style="height: 200rpx;"></view>
+  </view>
+
+  <!-- 未就绪：引导 -->
+  <block wx:elif="{{!ready}}">
+    <view class="stack-4" style="align-items: center; text-align: center; padding-top: 24rpx;">
+      <image src="{{assetBase}}/illustrations/empty-feedback.png" mode="aspectFit" style="width: 340rpx; height: 260rpx;"/>
+      <view class="t-label">FEEDBACK</view>
+      <view class="t-h1 t-serif">{{guardMessage}}</view>
+      <view class="t-body">每一条反馈都会改变下周的配单，先完成前面的步骤吧。</view>
+    </view>
+    <button class="btn btn-primary btn-block" bindtap="onGuardTap">{{guardCta}}</button>
+  </block>
+
+  <!-- 就绪：轻反馈 -->
+  <block wx:else>
+    <view class="stack-3">
+      <view class="t-label">FEEDBACK · 每一条都会改变下周</view>
+      <view class="t-h1 t-serif">这一期<text style="font-style: italic;">怎么样</text>？</view>
+      <view class="t-body">点几下就够了。比如太酸、不新鲜、下周别放，都会进入下周配单。</view>
+    </view>
+
+    <!-- 本期水果 -->
+    <view class="fruit-strip">
+      <view class="t-label">选一种你要反馈的</view>
+      <scroll-view class="fruit-scroll" scroll-x show-scrollbar="{{false}}">
+        <view class="fruit-scroll-inner">
+          <view
+            wx:for="{{items}}"
+            wx:key="fruit_code"
+            class="{{form.fruit_code === item.fruit_code ? 'fruit-choice fruit-choice-on' : 'fruit-choice'}}"
+            bindtap="onPickFruit"
+            data-v="{{item.fruit_code}}"
+          >
+            <view class="fruit-choice-emoji">{{item.emoji}}</view>
+            <view class="fruit-choice-name">{{item.fruit_name_cn}}</view>
+            <view class="fruit-choice-qty">{{item.qty_g}}g</view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 空状态 · 未选水果时的引导 -->
+    <view class="empty-hint" wx:if="{{!form.fruit_code}}">
+      <view class="empty-arrow">↑</view>
+      <view class="t-body t-muted" style="text-align: center;">
+        先点一种水果，<text style="display: block;">告诉我它这周怎么样</text>
+      </view>
+    </view>
+
+    <!-- 轻反馈 -->
+    <view class="feedback-panel" wx:if="{{form.fruit_code}}">
+      <view class="selected-fruit">
+        <view class="selected-emoji">{{selectedFruit.emoji}}</view>
+        <view>
+          <view class="selected-title">{{selectedFruit.fruit_name_cn}}</view>
+          <view class="selected-sub">这条反馈会影响下周的搭配权重</view>
+        </view>
+      </view>
+
+      <view>
+        <view class="feedback-label">整体感觉</view>
+        <view class="mood-grid">
+          <view
+            wx:for="{{quickMoods}}"
+            wx:key="v"
+            class="{{form.mood === item.v ? 'mood-card mood-card-on' : 'mood-card'}}"
+            bindtap="onMood"
+            data-v="{{item.v}}"
+          >
+            <view class="mood-title">{{item.label}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view>
+        <view class="feedback-label">具体哪里不合适？</view>
+        <view class="issue-grid">
+          <view
+            wx:for="{{issueTags}}"
+            wx:key="v"
+            class="{{form.issues.indexOf(item.v) >= 0 ? 'issue-chip issue-chip-on' : 'issue-chip'}}"
+            bindtap="onToggleIssue"
+            data-v="{{item.v}}"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view>
+        <view class="feedback-label">补充一句（可选）</view>
+        <textarea
+          class="quick-textarea"
+          value="{{form.comment}}"
+          bindinput="onInput"
+          data-k="comment"
+          placeholder="比如：下周换甜一点的，或者少放这个"
+        ></textarea>
+      </view>
+
+      <view wx:if="{{form.issues.indexOf('damaged') >= 0}}" class="photo-box">
+        <view class="t-caption">破损反馈需上传照片凭证</view>
+        <button class="btn btn-secondary btn-sm" style="align-self: flex-start;" bindtap="onPhoto">
+          {{photoUploading ? '上传中…' : (form.photo_urls.length ? '已上传 ' + form.photo_urls.length + ' 张' : '上传照片')}}
+        </button>
+        <view wx:if="{{photoLocalPaths.length}}" class="photo-preview-row">
+          <image
+            wx:for="{{photoLocalPaths}}"
+            wx:key="*this"
+            class="photo-preview"
+            src="{{item}}"
+            mode="aspectFill"
+          />
+        </view>
+      </view>
+    </view>
+
+    <button
+      class="feedback-submit"
+      bindtap="onSubmit"
+      disabled="{{!canSubmit}}"
+      loading="{{submitting}}"
+    >{{submitting ? '' : '提交反馈'}}</button>
+  </block>
+
+</view>

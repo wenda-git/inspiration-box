@@ -1,0 +1,158 @@
+<view class="home-page">
+  <image class="home-bg-deco home-bg-deco-leaf" src="{{assetBase}}/bg/deco-leaf.png" mode="aspectFit"/>
+  <image class="home-bg-deco home-bg-deco-citrus" src="{{assetBase}}/bg/deco-citrus.png" mode="aspectFit"/>
+  <image class="home-bg-deco home-bg-deco-apple" src="{{assetBase}}/bg/deco-apple.png" mode="aspectFit"/>
+
+  <!-- 自定义顶栏：撑开状态栏，左 logo 右胶囊（胶囊是系统的，不能动，我们只让出空间） -->
+  <view class="home-nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="home-nav-inner" style="height: {{(capsuleTop - statusBarHeight) + 32 + 8}}px;">
+      <image class="home-nav-logo" src="{{assetBase}}/brand/logo-horizontal.png" mode="aspectFit"/>
+    </view>
+  </view>
+
+  <!-- 滚动内容 -->
+  <scroll-view class="home-scroll" style="padding-top: {{navHeight || 88}}px;" scroll-y enhanced="{{true}}" show-scrollbar="{{false}}">
+
+    <view class="home-section">
+      <!-- 问候 -->
+      <view class="home-greeting">
+        <view class="home-greeting-title">{{greeting || '早上好，灵感生活家'}}</view>
+        <view class="home-greeting-sub">{{!isLoggedIn ? '这一周的水果，已经为你轻轻挑好了' : '这一周的水果，已经为你轻轻挑好了'}}</view>
+      </view>
+
+      <!-- Hero · 本周一箱 -->
+      <view class="home-hero" bindtap="onGoDetail">
+        <image class="home-hero-leaf" src="{{assetBase}}/bg/deco-leaf.png" mode="aspectFit"/>
+        <view class="home-hero-content">
+          <view class="home-hero-title">本周一箱</view>
+          <view class="home-hero-sub">AI 根据时令、口味与新鲜度，为你推荐这一周的水果组合</view>
+          <view class="home-hero-cta">
+            <text>{{!isLoggedIn || !hasProfile ? '生成本周配单' : '查看本周配单'}}</text>
+            <text class="home-hero-arrow">›</text>
+          </view>
+        </view>
+        <image class="home-box-image" src="{{assetBase}}/illustrations/home-hero-box.png" mode="aspectFit"/>
+
+        <!-- 3 特性 chips：设计稿里是 Hero 卡片底部的信息条 -->
+        <view class="home-chips">
+          <view class="home-chip">
+            <view class="home-chip-ico home-chip-ico-ai">AI</view>
+            <view>
+              <view class="home-chip-title">AI 推荐</view>
+              <view class="home-chip-sub">懂时令 更懂你</view>
+            </view>
+          </view>
+          <view class="home-chip">
+            <view class="home-chip-ico"><view class="home-chip-ico-truck"></view></view>
+            <view>
+              <view class="home-chip-title">新鲜直达</view>
+              <view class="home-chip-sub">产地直采 冷链到家</view>
+            </view>
+          </view>
+          <view class="home-chip">
+            <view class="home-chip-ico"><view class="home-chip-ico-cal"></view></view>
+            <view>
+              <view class="home-chip-title">每周配送</view>
+              <view class="home-chip-sub">定期送达 不间断</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 反馈学习强提示 -->
+      <view wx:if="{{feedbackLearning}}" class="home-learning-card" bindtap="onGoDetail">
+        <view class="home-learning-mark">{{feedbackLearning.firstEmoji}}</view>
+        <view class="home-learning-copy">
+          <view class="home-learning-kicker">上次反馈已生效</view>
+          <view class="home-learning-title">{{feedbackLearning.title}}</view>
+          <view class="home-learning-summary">{{feedbackLearning.summary}}</view>
+        </view>
+        <view class="home-learning-more">{{feedbackLearning.count}}项 ›</view>
+      </view>
+
+      <!-- 2×2 功能卡 -->
+      <view class="home-grid">
+        <!-- 本周推荐 -->
+        <view class="home-card" bindtap="onGoDetail">
+          <view class="home-card-head">
+            <text class="home-card-title">本周推荐</text>
+            <text class="home-card-arrow">›</text>
+          </view>
+          <image class="home-card-img home-card-img-basket" src="{{assetBase}}/cards/card-recommend.png" mode="aspectFit"/>
+          <view class="home-card-foot">
+            <view class="home-card-sub">{{planLabel || '春日轻盈果箱'}}</view>
+            <view class="home-card-desc">{{itemsPreview || '4-6 种时令水果'}}</view>
+            <view class="home-card-price">¥{{firstPayment}}/箱</view>
+          </view>
+        </view>
+
+        <!-- 营养提醒 -->
+        <view class="home-card" bindtap="onGoDetail">
+          <view class="home-card-head">
+            <text class="home-card-title">营养提醒</text>
+            <text class="home-card-arrow">›</text>
+          </view>
+          <image class="home-card-img home-card-img-kiwi" src="{{assetBase}}/cards/card-nutrition.png" mode="aspectFit"/>
+          <view class="home-card-foot">
+            <view wx:if="{{nutritionTip}}">
+              <view class="home-card-sub">{{nutritionTip.title}}</view>
+              <view class="home-card-desc">{{nutritionTip.detail}}</view>
+            </view>
+            <view wx:else>
+              <view class="home-card-sub">AI 营养顾问</view>
+            <view class="home-card-desc">测完即可看到本周命中点</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 我的订阅 -->
+        <view class="home-card" bindtap="onGoSubscription">
+          <view class="home-card-head">
+            <text class="home-card-title">我的订阅</text>
+            <text class="home-card-arrow">›</text>
+          </view>
+          <image class="home-card-img home-card-img-calendar" src="{{assetBase}}/cards/card-subscription.png" mode="aspectFit"/>
+          <view class="home-card-foot">
+            <view wx:if="{{isPaid}}">
+              <view class="home-card-sub">每周一箱 · 周二送达</view>
+              <view class="home-card-desc">下次送达</view>
+              <view class="home-card-emphasis">{{nextShipText}}</view>
+            </view>
+            <view wx:elif="{{subscription}}">
+              <view class="home-card-sub">未完成订阅</view>
+              <view class="home-card-desc">首箱 ¥{{firstPayment}} · 喜欢再锁定</view>
+            </view>
+            <view wx:else>
+              <view class="home-card-sub">未订阅</view>
+              <view class="home-card-desc">先测一测再决定</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 本周心情 -->
+        <view class="home-card" bindtap="onGoFeedback">
+          <view class="home-card-head">
+            <text class="home-card-title">本周心情</text>
+            <text class="home-card-arrow">›</text>
+          </view>
+          <image class="home-card-img home-card-img-mood" src="{{assetBase}}/cards/card-mood.png" mode="aspectFit"/>
+          <view class="home-card-foot">
+            <view class="home-card-sub">让一份新鲜</view>
+            <view class="home-card-desc">治愈忙碌的日常</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <!-- 底部未付款 CTA（游客 / 已登录未付款 都显示） -->
+  <view wx:if="{{!loading && !isPaid}}" class="home-floating-cta">
+    <button class="home-pay-btn" bindtap="onPay">
+      <text>{{!isLoggedIn || !hasProfile ? '生成我的果箱' : '锁定本周果箱 · 首箱'}}</text>
+      <text wx:if="{{isLoggedIn && hasProfile}}" class="home-pay-price">¥{{firstPayment}}</text>
+      <text wx:else class="home-pay-price">›</text>
+    </button>
+  </view>
+
+</view>

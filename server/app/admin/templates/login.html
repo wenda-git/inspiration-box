@@ -1,0 +1,30 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="max-w-sm mx-auto mt-24">
+  <div class="text-center mb-8">
+    <div class="text-5xl mb-3">🥝</div>
+    <h1 class="text-2xl">灵感果仓 后台</h1>
+    <p class="text-sm text-ink-400 mt-2">运营管理 · 单账号模式</p>
+  </div>
+
+  {% if error %}
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-500/20 px-4 py-2 text-red-600 text-sm">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/admin/login" class="bg-white rounded-2xl shadow-sm p-6 space-y-4">
+    <div>
+      <label class="block text-xs text-ink-400 mb-2">用户名</label>
+      <input name="username" autocomplete="username"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 focus:outline-none focus:border-matcha-500"
+             required>
+    </div>
+    <div>
+      <label class="block text-xs text-ink-400 mb-2">密码</label>
+      <input name="password" type="password" autocomplete="current-password"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 focus:outline-none focus:border-matcha-500"
+             required>
+    </div>
+    <button class="w-full bg-ink-700 text-cream-50 py-2.5 rounded-full font-medium hover:bg-black">登录</button>
+  </form>
+</div>
+{% endblock %}

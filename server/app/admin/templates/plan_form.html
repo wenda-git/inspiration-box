@@ -1,0 +1,161 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="mb-6">
+  <a href="/admin/plans" class="text-sm text-ink-400 hover:text-ink-700">← 返回列表</a>
+  <h1 class="text-3xl mt-2">{{ title }}</h1>
+</div>
+
+<form method="post" action="/admin/plans/{{ item.code }}/edit" class="space-y-6 max-w-5xl">
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">基本信息</h2>
+  <div class="grid md:grid-cols-2 gap-4">
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">系统编号（只读）</span>
+      <input value="{{ item.code }}" readonly class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono bg-cream-100">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">名称</span>
+      <input name="name" value="{{ item.name }}" required class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <label class="block md:col-span-2">
+      <span class="block text-xs text-ink-400 mb-1">说明</span>
+      <input name="tagline" value="{{ item.tagline or '' }}" class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">主题色</span>
+      <select name="theme" class="w-full rounded-lg border border-black/10 px-3 py-2">
+        {% for value, label in theme_options %}
+          <option value="{{ value }}" {% if item.theme == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">图标</span>
+      <input name="emoji" value="{{ item.emoji }}" class="w-full rounded-lg border border-black/10 px-3 py-2">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">用户统一价 (¥/周)</span>
+      <input name="price_cny" type="number" step="1" min="0" value="{{ item.price_cny }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+      <span class="block text-xs text-ink-400 mt-1">用户侧不展示多个商品，只展示本周一箱的订阅价。</span>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">水果成本上限 (¥/箱)</span>
+      <input name="budget_cny" type="number" step="1" min="0" value="{{ item.budget_cny }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+      <span class="block text-xs text-ink-400 mt-1">配单算法的硬预算，水果成本不能超过这个值。</span>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">目标克重</span>
+      <input name="box_target_g" type="number" step="100" min="500" value="{{ item.box_target_g }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">排序</span>
+      <input name="sort_order" type="number" value="{{ item.sort_order }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">营养规则</h2>
+  <p class="text-xs text-ink-400">留空代表不限制。这里是算法必须尽量满足的核心指标。</p>
+  <div class="grid md:grid-cols-3 gap-4">
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">最高 GI</span>
+      <input name="max_gi" type="number" step="1" min="0" value="{{ item.hard_form.get('max_gi', '') }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">最高糖分 (g/100g)</span>
+      <input name="max_sugar_g" type="number" step="0.1" min="0" value="{{ item.hard_form.get('max_sugar_g', '') }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">最低纤维 (g/100g)</span>
+      <input name="min_fiber_g" type="number" step="0.1" min="0" value="{{ item.hard_form.get('min_fiber_g', '') }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">最低叶酸 (µg/份)</span>
+      <input name="min_folate_per_portion_ug" type="number" step="1" min="0" value="{{ item.hard_form.get('min_folate_per_portion_ug', '') }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">最低维 C (mg/份)</span>
+      <input name="min_vitC_mg" type="number" step="1" min="0" value="{{ item.hard_form.get('min_vitC_mg', '') }}"
+             class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono">
+    </label>
+    <label class="inline-flex items-center gap-3 pt-6">
+      <input type="checkbox" name="min_vitC_or_anthocyanin" {% if item.hard_form.get('min_vitC_or_anthocyanin') %}checked{% endif %} class="w-4 h-4 accent-matcha-500">
+      <span class="text-sm">维 C 或花青素达标即可</span>
+    </label>
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">后续每周策略</h2>
+  <p class="text-xs text-ink-400">用户首箱之后的正式订阅箱，建议 5-7 种、2600-3200g。</p>
+  <div class="grid md:grid-cols-3 gap-4">
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">最少水果种类</span><input name="min_items" type="number" min="1" value="{{ item.soft_prefs.get('min_items', 3) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">最多水果种类</span><input name="max_items" type="number" min="1" value="{{ item.soft_prefs.get('max_items', 5) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">单品最多占比</span><input name="single_share_max" type="number" step="0.01" min="0" max="1" value="{{ item.soft_prefs.get('single_share_max', 0.38) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">预算利用目标</span><input name="target_fill_ratio" type="number" step="0.01" min="0" max="1" value="{{ item.soft_prefs.get('target_fill_ratio', 0.82) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">克重上限倍率</span><input name="max_total_ratio" type="number" step="0.01" min="1" value="{{ item.soft_prefs.get('max_total_ratio', 1.05) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">精品水果单价阈值 (¥/kg)</span><input name="premium_unit_cost_cny_per_kg" type="number" step="1" min="0" value="{{ item.soft_prefs.get('premium_unit_cost_cny_per_kg', 65) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">精品水果最多几种</span><input name="max_premium_items" type="number" min="0" value="{{ item.soft_prefs.get('max_premium_items', 1) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">亮点水果最多几种</span><input name="max_highlight_items" type="number" min="0" value="{{ item.soft_prefs.get('max_highlight_items', 3) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">预估履约成本 (¥)</span><input name="estimated_ops_cost_cny" type="number" step="1" min="0" value="{{ item.soft_prefs.get('estimated_ops_cost_cny', 0) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">目标贡献毛利率</span><input name="target_contribution_margin" type="number" step="0.01" min="0" max="1" value="{{ item.soft_prefs.get('target_contribution_margin', 0.2) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <h2 class="text-lg">首箱策略</h2>
+  <p class="text-xs text-ink-400">¥99 首箱不做小样，建议 4-5 种、1800-2200g，用来建立价值感。</p>
+  <div class="grid md:grid-cols-3 gap-4">
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱最少种类</span><input name="first_min_items" type="number" min="1" value="{{ item.first_box.get('min_items', 4) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱最多种类</span><input name="first_max_items" type="number" min="1" value="{{ item.first_box.get('max_items', 5) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱目标克重</span><input name="first_box_target_g" type="number" step="100" min="500" value="{{ item.first_box.get('box_target_g', 2000) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱水果预算 (¥)</span><input name="first_budget_cny" type="number" step="1" min="0" value="{{ item.first_box.get('budget_cny', 90) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱单品最多占比</span><input name="first_single_share_max" type="number" step="0.01" min="0" max="1" value="{{ item.first_box.get('single_share_max', 0.34) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱克重上限倍率</span><input name="first_max_total_ratio" type="number" step="0.01" min="1" value="{{ item.first_box.get('max_total_ratio', 1.08) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱预算利用目标</span><input name="first_target_fill_ratio" type="number" step="0.01" min="0" max="1" value="{{ item.first_box.get('target_fill_ratio', 0.82) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+    <label class="block"><span class="block text-xs text-ink-400 mb-1">首箱精品最多几种</span><input name="first_max_premium_items" type="number" min="0" value="{{ item.first_box.get('max_premium_items', 1) }}" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono"></label>
+  </div>
+</section>
+
+<section class="bg-white rounded-2xl p-6 space-y-4">
+  <details>
+    <summary class="cursor-pointer text-sm text-ink-500">高级设置（一般不用改）</summary>
+    <div class="grid md:grid-cols-2 gap-4 mt-4">
+      <label class="block">
+        <span class="block text-xs text-ink-400 mb-1">额外营养规则</span>
+        <textarea name="hard_rules_extra" rows="6" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-sm">{{ item.hard_extra_json }}</textarea>
+      </label>
+      <label class="block">
+        <span class="block text-xs text-ink-400 mb-1">额外配单规则</span>
+        <textarea name="soft_prefs_extra" rows="6" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-sm">{{ item.soft_extra_json }}</textarea>
+      </label>
+      {% if item.code == 'prenatal' %}
+      <label class="block md:col-span-2">
+        <span class="block text-xs text-ink-400 mb-1">孕产阶段细分规则</span>
+        <textarea name="stage_rules_json" rows="8" class="w-full rounded-lg border border-black/10 px-3 py-2 font-mono text-sm">{{ item.stage_rules_json }}</textarea>
+      </label>
+      {% endif %}
+    </div>
+  </details>
+</section>
+
+<section class="bg-white rounded-2xl p-6">
+  <label class="inline-flex items-center gap-3">
+    <input type="checkbox" name="is_active" {% if item.is_active %}checked{% endif %} class="w-4 h-4 accent-matcha-500">
+    <span>启用（用户可选择这个健康方向）</span>
+  </label>
+</section>
+
+<div class="flex items-center gap-3">
+  <button class="bg-ink-700 text-cream-50 px-6 py-2.5 rounded-full hover:bg-black">保存</button>
+  <a href="/admin/plans" class="text-ink-400 hover:text-ink-700">取消</a>
+</div>
+
+</form>
+{% endblock %}

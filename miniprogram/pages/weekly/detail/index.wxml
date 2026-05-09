@@ -1,0 +1,384 @@
+<view class="{{'theme-' + (theme || 'matcha')}} detail-page stack-7">
+
+  <image class="detail-bg-leaf detail-bg-leaf-1" src="{{assetBase}}/bg/deco-leaf.png" mode="aspectFit"/>
+  <image class="detail-bg-leaf detail-bg-leaf-2" src="{{assetBase}}/bg/deco-citrus.png" mode="aspectFit"/>
+
+  <view class="detail-brand">
+    <image class="detail-logo" src="{{assetBase}}/brand/logo-horizontal.png" mode="aspectFit"/>
+  </view>
+
+  <view wx:if="{{!loading}}" class="detail-top">
+    <view class="detail-title">为你定制本周一箱</view>
+    <view class="detail-sub">依据你的口味、时令偏好与新鲜度，AI 为你组合更适合这一周的水果。</view>
+
+    <view class="detail-badges">
+      <view class="detail-badge"><text>AI</text><view>AI 推荐</view></view>
+      <view class="detail-badge"><text>叶</text><view>当季优先</view></view>
+      <view class="detail-badge"><text>车</text><view>新鲜直达</view></view>
+    </view>
+
+    <view class="detail-box-card">
+      <image class="detail-box-leaf" src="{{assetBase}}/bg/deco-leaf.png" mode="aspectFit"/>
+      <view class="detail-box-copy">
+        <view class="detail-box-kicker">本周推荐组合</view>
+        <view class="detail-box-title">{{planLabel || '经典轻盈果箱'}}</view>
+        <view class="detail-box-desc">{{data.items.length}} 种时令水果 · 个性化搭配</view>
+        <view class="detail-box-price">¥{{firstPayment}}<text>/ 箱</text></view>
+      </view>
+      <image class="detail-box-img" src="{{assetBase}}/illustrations/login-hero.png" mode="aspectFit"/>
+    </view>
+  </view>
+
+  <!-- 订单状态：用户回来查看时优先看到进度 -->
+  <view wx:if="{{!loading && order}}" class="order-status-card">
+    <view class="row-between">
+      <view>
+        <view class="t-label">本周订单</view>
+        <view class="t-h3 t-serif order-status-title">
+          <image wx:if="{{order.status === 'locked'}}" class="order-status-icon" src="{{assetBase}}/icons/box.svg" mode="aspectFit"/>
+          <image wx:elif="{{order.status === 'packing'}}" class="order-status-icon" src="{{assetBase}}/icons/gift.svg" mode="aspectFit"/>
+          <image wx:elif="{{order.status === 'shipped'}}" class="order-status-icon" src="{{assetBase}}/icons/truck.svg" mode="aspectFit"/>
+          <image wx:elif="{{order.status === 'delivered'}}" class="order-status-icon" src="{{assetBase}}/icons/check.svg" mode="aspectFit"/>
+          <text>
+            <block wx:if="{{order.status === 'locked'}}">已订阅 · 待发货</block>
+            <block wx:elif="{{order.status === 'packing'}}">云仓分拣中</block>
+            <block wx:elif="{{order.status === 'shipped'}}">运输中</block>
+            <block wx:elif="{{order.status === 'delivered'}}">已签收</block>
+            <block wx:elif="{{order.status === 'cancelled'}}">已取消</block>
+            <block wx:else>{{order.status}}</block>
+          </text>
+        </view>
+      </view>
+      <view wx:if="{{order.tracking_no}}" class="chip chip-brand">{{order.tracking_no}}</view>
+    </view>
+    <view class="order-status-hint t-caption">
+      <block wx:if="{{order.status === 'locked'}}">周三 10:00 截单，周四从云仓发出。</block>
+      <block wx:elif="{{order.status === 'packing'}}">云仓正在分拣，准备发往你家。</block>
+      <block wx:elif="{{order.status === 'shipped'}}">冷链在路上，预计次日送达。</block>
+      <block wx:elif="{{order.status === 'delivered'}}">记得来「反馈」说说吃起来怎么样。</block>
+    </view>
+  </view>
+
+  <!-- 销售理由：第一屏直接说明为什么值得锁定 -->
+  <view wx:if="{{!loading}}" class="fit-card">
+    <view class="row-between">
+      <view>
+        <view class="t-label">WHY THIS BOX</view>
+        <view class="t-h2 t-serif" style="margin-top: 6rpx;">这箱为什么适合你</view>
+      </view>
+      <button class="share-mini" open-type="share">分享报告</button>
+    </view>
+    <view class="fit-grid">
+      <view wx:for="{{salesPoints}}" wx:key="title" class="fit-item">
+        <view class="fit-dot"></view>
+        <view class="fit-copy">
+          <view class="fit-title">{{item.title}}</view>
+          <view class="fit-detail">{{item.detail}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 反馈学习闭环 -->
+  <view
+    wx:if="{{!loading && data.decision_trace && data.decision_trace.feedback_learning && data.decision_trace.feedback_learning.items && data.decision_trace.feedback_learning.items.length}}"
+    class="learning-card"
+  >
+    <view class="row-between">
+      <view>
+        <view class="t-label">LEARNED FROM YOU</view>
+        <view class="t-h3 t-serif" style="margin-top: 4rpx;">{{data.decision_trace.feedback_learning.title}}</view>
+        <view wx:if="{{data.decision_trace.feedback_learning.summary}}" class="learning-summary">
+          {{data.decision_trace.feedback_learning.summary}}
+        </view>
+      </view>
+      <view class="learning-badge">下周还会继续学</view>
+    </view>
+    <view class="learning-list">
+      <view wx:for="{{data.decision_trace.feedback_learning.items}}" wx:key="fruit_code" class="learning-row">
+        <view class="learning-emoji">{{item.emoji}}</view>
+        <view class="grow">
+          <view class="learning-title">{{item.fruit_name_cn}}</view>
+          <view class="learning-message">{{item.message}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 试看承诺卡（未付款才显示，把 CTA 抬到第一屏） -->
+  <view wx:if="{{!loading && !isPaid}}" class="preview-promise">
+    <view class="preview-topline">
+      <view class="preview-emoji-row">
+        <text wx:for="{{data.items}}" wx:key="fruit_code" wx:for-index="idx" wx:if="{{idx < 5}}" class="preview-emoji">{{item.emoji}}</text>
+      </view>
+      <view class="preview-badge">首箱体验</view>
+    </view>
+    <view class="preview-title t-serif">这就是你本周的箱子</view>
+    <view class="preview-sub">看到完整配单和推荐理由后再决定；支付前填写地址，首箱后可随时取消。</view>
+    <view class="preview-price-line">
+      <view>
+        <view class="price-label">现在锁定首箱</view>
+        <view class="preview-price">¥{{firstPayment}}<text>/箱</text></view>
+      </view>
+      <view class="preview-price-note">后续 ¥{{recurringPrice}}/周 · 可取消</view>
+    </view>
+  </view>
+
+  <!-- 营养达成 -->
+  <view class="nutrition-card" wx:if="{{!loading}}">
+    <view class="row-between">
+      <view>
+        <view class="t-label">本周营养达成</view>
+        <view class="nutrition-title t-serif">核心指标</view>
+      </view>
+      <view class="nutrition-toggle" bindtap="onToggleNutrition">{{showNutritionFull ? '收起' : '展开'}}</view>
+    </view>
+
+    <view class="nutrition-grid">
+      <view wx:for="{{metrics}}" wx:key="key" class="nutrition-metric">
+        <view class="nutrition-metric-value t-mono">{{item.value}}</view>
+        <view class="nutrition-metric-label">{{item.label}}</view>
+        <view class="bar-track mini-track">
+          <view class="bar-fill" style="width: {{item.pct}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{showNutritionFull}}" class="nutrition-full">
+      <view class="row wrap">
+        <view wx:for="{{data.nutrition_report.hits}}" wx:key="*this" class="chip chip-brand">{{item}} ✓</view>
+        <view wx:for="{{data.nutrition_report.gaps}}" wx:key="*this" class="chip chip-danger">{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 配单列表 -->
+  <view class="stack-4" wx:if="{{!loading}}">
+    <view class="row-between">
+      <view class="t-h2 t-serif">配单明细</view>
+      <view class="t-caption">{{order && order.status === 'delivered' ? '点击反馈口味' : '点击标记不想要'}}</view>
+    </view>
+
+    <view
+      wx:for="{{displayItems}}"
+      wx:key="batch_id"
+      class="card fruit-card"
+      bindtap="onReplace"
+      data-code="{{item.fruit_code}}"
+    >
+      <view class="row" style="gap: 20rpx;">
+        <view class="fruit-avatar">{{item.emoji}}</view>
+        <view class="grow" style="min-width: 0;">
+          <view class="row-between">
+            <view class="t-h3">{{item.fruit_name_cn}}</view>
+            <view class="t-caption t-mono">{{item.qty_g}}g</view>
+          </view>
+          <view class="fruit-meta-row">
+            <view class="fruit-tag">{{item.displayTag}}</view>
+            <view class="fruit-reason">{{item.shortReason}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 近效期加料 -->
+  <view wx:if="{{!loading && data.bonus_items && data.bonus_items.length}}" class="bonus-card stack-3">
+    <view class="row-between">
+      <view class="row" style="gap: 12rpx;">
+        <image style="width: 40rpx; height: 40rpx; color: var(--vl-peach);" src="{{assetBase}}/icons/gift.svg" mode="aspectFit"/>
+        <view class="t-h3 t-serif">本周惊喜加料</view>
+      </view>
+      <view class="chip chip-peach">限时赠送</view>
+    </view>
+    <view wx:for="{{data.bonus_items}}" wx:key="fruit_code" class="row" style="gap: 16rpx;">
+      <view class="fruit-avatar" style="width: 64rpx; height: 64rpx; font-size: 28rpx;">{{item.emoji}}</view>
+      <view class="grow">
+        <view class="t-body t-ink">{{item.fruit_name_cn}} {{item.qty_g}}g</view>
+        <view class="t-caption">{{item.note}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 7 天食用计划 -->
+  <view wx:if="{{!loading && data.daily_plan && data.daily_plan.length}}" class="card stack-4">
+    <view class="row-between">
+      <view class="t-h3 t-serif">7 天食用计划</view>
+      <view class="chip chip-brand">AI 为你编排</view>
+    </view>
+    <view class="daily-list">
+      <view wx:for="{{visibleDailyPlan}}" wx:key="day" class="daily-row">
+        <view class="daily-day">{{item.day}}</view>
+        <view class="grow">
+          <view class="daily-items">{{item.items}}</view>
+          <view class="daily-tip"><text class="daily-tip-mark">Tip</text> {{item.tip}}</view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{data.daily_plan.length > 3}}" class="daily-toggle" bindtap="onToggleDailyPlan">
+      {{showDailyFull ? '收起计划' : '展开完整 7 天计划'}}
+    </view>
+  </view>
+
+  <!-- 食用指南（Markdown 渲染 · 标题由 LLM 给） -->
+  <view class="card-ghost stack-4" wx:if="{{!loading && guideBlocks.length}}">
+    <view class="guide stack-3">
+      <block wx:for="{{guideBlocks}}" wx:key="index">
+        <!-- h2 / h3 / h4 -->
+        <view wx:if="{{item.type === 'h2'}}" class="guide-h2">
+          <text wx:for="{{item.spans}}" wx:for-item="span" wx:key="index"
+                class="{{span.bold ? 'guide-bold' : ''}}">{{span.text}}</text>
+        </view>
+        <view wx:elif="{{item.type === 'h3' || item.type === 'h4'}}" class="guide-h3">
+          <text wx:for="{{item.spans}}" wx:for-item="span" wx:key="index"
+                class="{{span.bold ? 'guide-bold' : ''}}">{{span.text}}</text>
+        </view>
+
+        <!-- ul 列表 -->
+        <view wx:elif="{{item.type === 'ul'}}" class="guide-ul stack-3">
+          <view wx:for="{{item.items}}" wx:for-item="li" wx:key="index" class="guide-li">
+            <view class="guide-bullet">·</view>
+            <view class="guide-li-text">
+              <text wx:for="{{li.spans}}" wx:for-item="span" wx:key="index"
+                    class="{{span.bold ? 'guide-bold' : ''}}">{{span.text}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 普通段落 -->
+        <view wx:else class="guide-p">
+          <text wx:for="{{item.spans}}" wx:for-item="span" wx:key="index"
+                class="{{span.bold ? 'guide-bold' : ''}}">{{span.text}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 为什么这样选（展开） -->
+  <view wx:if="{{!loading && data.decision_trace}}" class="card-ghost stack-3">
+    <view class="row-between" bindtap="onToggleTrace">
+      <view class="t-h3 t-serif">为什么这样选？</view>
+      <view class="t-caption">{{showTrace ? '收起 ˅' : '展开 ›'}}</view>
+    </view>
+
+    <view wx:if="{{showTrace}}" class="stack-5" style="margin-top: 16rpx;">
+
+      <!-- 为你做的个性化 -->
+      <view wx:if="{{data.decision_trace.personalizations && data.decision_trace.personalizations.length}}" class="stack-3">
+        <view class="t-label">为你做的</view>
+        <view
+          wx:for="{{data.decision_trace.personalizations}}"
+          wx:key="*this"
+          class="trace-row"
+        >
+          <view class="trace-dot">✓</view>
+          <view class="t-body t-ink grow">{{item}}</view>
+        </view>
+      </view>
+
+      <!-- 权衡 -->
+      <view wx:if="{{data.decision_trace.filtered && data.decision_trace.filtered.length}}" class="stack-3">
+        <view class="t-label">没选的原因</view>
+        <view
+          wx:for="{{data.decision_trace.filtered}}"
+          wx:key="name_cn"
+          class="row"
+          style="gap: 14rpx;"
+        >
+          <view class="fruit-avatar" style="width: 52rpx; height: 52rpx; font-size: 22rpx; opacity: 0.55;">{{item.emoji}}</view>
+          <view class="grow">
+            <view class="t-body" style="opacity: 0.75;">{{item.name_cn}}</view>
+            <view class="t-caption">{{item.reason}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部脚注 -->
+      <view class="t-caption t-muted">
+        本周云仓 {{data.decision_trace.total_candidates}} 种在售 ·
+        为你挑了 {{data.items.length}} 种主打<text wx:if="{{data.bonus_items.length}}"> + {{data.bonus_items.length}} 种加料</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Loading · AI 等待态 -->
+  <view wx:if="{{loading}}" class="ai-loading stack-6">
+    <image class="ai-loading-illust" src="{{assetBase}}/illustrations/empty-weekly-loading.png" mode="aspectFit"/>
+    <view class="stack-3" style="align-items: center; text-align: center;">
+      <view class="t-label">AI 为你而配</view>
+      <view class="t-h2 t-serif">{{loadingText}}</view>
+      <view class="t-caption">通常 15-25 秒</view>
+    </view>
+    <view class="stack-4" style="width: 100%;">
+      <view class="skeleton" style="height: 220rpx;"></view>
+      <view class="skeleton" style="height: 160rpx;"></view>
+      <view class="skeleton" style="height: 160rpx;"></view>
+    </view>
+  </view>
+
+  <!-- 固定底部动作区 -->
+  <view wx:if="{{!loading}}" class="detail-bottom-bar">
+    <view wx:if="{{!isPaid}}" class="bottom-action-row">
+      <button class="btn btn-secondary bottom-secondary" bindtap="onRegenerate" disabled="{{regenLeft <= 0}}">
+        {{regenLeft > 0 ? '换一批' : '已换完'}}
+      </button>
+      <button class="btn btn-brand grow bottom-primary" bindtap="onPay" loading="{{paying}}">
+        {{paying ? '' : '订阅首箱 ¥' + firstPayment}}
+      </button>
+    </view>
+    <view wx:elif="{{isPaid && !order}}" class="bottom-action-row">
+      <button class="btn btn-secondary bottom-secondary" bindtap="onRefreshOrder">刷新状态</button>
+      <button class="btn btn-brand grow bottom-primary" disabled="{{true}}">已订阅 · 处理中</button>
+    </view>
+    <view wx:else class="bottom-action-row">
+      <button class="btn btn-secondary grow" bindtap="onRegenerate">想换水果</button>
+      <button class="btn btn-brand grow bottom-primary" bindtap="onGoFeedback">去反馈</button>
+    </view>
+  </view>
+
+  <!-- 付款确认弹层 -->
+  <view wx:if="{{showPayConfirm}}" class="pay-mask" catchtap="onClosePayConfirm">
+    <view class="pay-sheet" catchtap="">
+      <view class="pay-sheet-handle"></view>
+      <view class="t-label">确认订阅</view>
+      <view class="t-h2 t-serif" style="margin-top: 6rpx;">你即将收到这箱</view>
+
+      <view class="pay-items stack-3">
+        <view wx:for="{{data.items}}" wx:key="fruit_code" class="pay-item">
+          <view class="pay-item-emoji">{{item.emoji}}</view>
+          <view class="grow pay-item-name">{{item.fruit_name_cn}}</view>
+          <view class="t-caption t-mono">{{item.qty_g}}g</view>
+        </view>
+      </view>
+
+      <view class="pay-divider"></view>
+
+      <view class="pay-breakdown stack-2">
+        <view class="row-between">
+          <view class="t-body">后续每周</view>
+          <view class="t-body t-mono">¥{{recurringPrice}}</view>
+        </view>
+        <view class="row-between">
+          <view class="t-body">首单折扣</view>
+          <view class="t-body t-mono" style="color: var(--vl-danger);">-¥{{recurringPrice - firstPayment}}</view>
+        </view>
+        <view class="row-between" style="margin-top: 6rpx;">
+          <view class="t-h3">首单支付</view>
+          <view class="t-h3 t-mono t-brand">¥{{firstPayment}}</view>
+        </view>
+      </view>
+
+      <view class="pay-notes t-caption">
+        · 支付前会确认收货地址 · 下周起每周 ¥{{recurringPrice}} 自动续费 · 可随时取消
+      </view>
+
+      <view class="row" style="gap: 16rpx; margin-top: 20rpx;">
+        <button class="btn btn-secondary" bindtap="onClosePayConfirm">再看看</button>
+        <button class="btn btn-brand grow" bindtap="onConfirmPay" loading="{{paying}}">
+          {{paying ? '' : '确认支付 ¥' + firstPayment}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

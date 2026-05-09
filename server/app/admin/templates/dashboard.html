@@ -1,0 +1,115 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <div class="text-xs text-ink-400">第 {{ iso_week }} 周 · {{ iso_year }}</div>
+    <h1 class="text-3xl mt-1">仪表盘</h1>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">活跃水果</div>
+      <div class="text-3xl font-serif mt-1">{{ stats.active_fruits }}</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">库存批次</div>
+      <div class="text-3xl font-serif mt-1">{{ stats.active_batches }}</div>
+      <div class="text-xs text-ink-400 mt-1">预占 {{ stats.reserved_kg }} kg</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">注册用户</div>
+      <div class="text-3xl font-serif mt-1">{{ stats.users }}</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">活跃订阅</div>
+      <div class="text-3xl font-serif mt-1">{{ stats.active_subs }}</div>
+      <div class="text-xs text-ink-400 mt-1">暂停 {{ stats.paused_subs }} · 已付 {{ stats.paid_subs }}</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">近 14 天收入</div>
+      <div class="text-3xl font-serif mt-1">¥{{ "%.0f" | format(revenue.revenue or 0) }}</div>
+      <div class="text-xs text-ink-400 mt-1">成功 {{ revenue.paid_count or 0 }} · 待支付 {{ revenue.pending_count or 0 }}</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">近 14 天水果成本</div>
+      <div class="text-3xl font-serif mt-1">¥{{ "%.0f" | format(ops.order_cost or 0) }}</div>
+      <div class="text-xs text-ink-400 mt-1">履约预估 ¥{{ "%.0f" | format(ops.ops_cost_estimate or 0) }}</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">近 14 天贡献毛利</div>
+      <div class="text-3xl font-serif mt-1 {% if ops.contribution_estimate < 0 %}text-peach-500{% else %}text-matcha-600{% endif %}">
+        ¥{{ "%.0f" | format(ops.contribution_estimate or 0) }}
+      </div>
+      <div class="text-xs text-ink-400 mt-1">收入 - 水果成本 - 履约预估</div>
+    </div>
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">30 天满意度</div>
+      <div class="text-3xl font-serif mt-1">{{ feedback.avg_rating or 0 }}</div>
+      <div class="text-xs text-ink-400 mt-1">反馈 {{ feedback.total or 0 }} · 低分 {{ feedback.low_rating or 0 }}</div>
+    </div>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <section class="bg-white rounded-2xl p-6">
+      <h2 class="text-lg mb-4">近 7 天新增注册</h2>
+      <div class="space-y-2">
+        {% for row in recent_users %}
+          <div class="flex justify-between text-sm">
+            <span class="text-ink-500">{{ row.phone }}</span>
+            <span class="text-ink-400">{{ row.at }}</span>
+          </div>
+        {% else %}
+          <div class="text-sm text-ink-400">暂无</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl p-6">
+      <h2 class="text-lg mb-4">本周 AI 调用</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-ink-500">总调用</span><span>{{ llm.total }}</span></div>
+        <div class="flex justify-between"><span class="text-ink-500">平均延迟</span><span>{{ llm.avg_ms }} ms</span></div>
+        <div class="flex justify-between"><span class="text-ink-500">输入字数单位</span><span>{{ llm.tokens_in }}</span></div>
+        <div class="flex justify-between"><span class="text-ink-500">输出字数单位</span><span>{{ llm.tokens_out }}</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <section class="bg-white rounded-2xl p-6">
+      <h2 class="text-lg mb-4">近 14 天履约</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-sm">
+        <div class="rounded-xl bg-cream-100 p-3"><div class="text-xl font-serif">{{ ops.locked or 0 }}</div><div class="text-xs text-ink-400">锁单</div></div>
+        <div class="rounded-xl bg-cream-100 p-3"><div class="text-xl font-serif">{{ ops.packing or 0 }}</div><div class="text-xs text-ink-400">分拣</div></div>
+        <div class="rounded-xl bg-cream-100 p-3"><div class="text-xl font-serif">{{ ops.shipped or 0 }}</div><div class="text-xs text-ink-400">发货</div></div>
+        <div class="rounded-xl bg-cream-100 p-3"><div class="text-xl font-serif">{{ ops.delivered or 0 }}</div><div class="text-xs text-ink-400">签收</div></div>
+        <div class="rounded-xl bg-cream-100 p-3"><div class="text-xl font-serif">{{ ops.cancelled or 0 }}</div><div class="text-xs text-ink-400">取消</div></div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-2xl p-6">
+      <h2 class="text-lg mb-4">低分水果</h2>
+      <div class="space-y-2 text-sm">
+        {% for row in disliked %}
+          <div class="flex justify-between"><span>{{ row.fruit_name_cn }}</span><span class="text-ink-400">{{ row.cnt }} 次</span></div>
+        {% else %}
+          <div class="text-sm text-ink-400">暂无低分反馈</div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <section>
+    <h2 class="text-lg mb-4">快捷入口</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <a href="/admin/fruits/new"    class="block bg-matcha-50 hover:bg-matcha-500/10 rounded-xl p-4 border border-matcha-500/20">+ 新增水果</a>
+      <a href="/admin/inventory/new" class="block bg-berry-50 hover:bg-berry-500/10 rounded-xl p-4 border border-berry-500/20">+ 录入库存</a>
+      <a href="/admin/plans"         class="block bg-peach-50 hover:bg-peach-500/10 rounded-xl p-4 border border-peach-500/20">调整箱型策略</a>
+      <a href="/admin/orders"        class="block bg-white hover:bg-cream-100 rounded-xl p-4 border border-black/5">查看订单</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

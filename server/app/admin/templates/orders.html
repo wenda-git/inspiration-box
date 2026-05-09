@@ -1,0 +1,256 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="mb-6">
+  <div class="text-xs text-ink-400">第 {{ iso_week }} 周 · {{ iso_year }}</div>
+  <h1 class="text-3xl mt-1">订单与配单</h1>
+</div>
+
+<div class="bg-white rounded-2xl p-5 mb-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <div class="text-xs text-ink-400">运营操作</div>
+      <div class="text-lg font-serif mt-1">周期性操作</div>
+      <div class="text-xs text-ink-400 mt-1">周三截单生成订单，周四推进分拣；这些按钮先作为人工确认入口。</div>
+    </div>
+    <div class="flex flex-wrap gap-2 justify-end">
+      <form method="post" action="/admin/orders/run-cycle" onsubmit="return confirm('确认要为所有已付订阅生成本周订单并预占库存吗？')">
+        <input type="hidden" name="action" value="lock_paid">
+        <button class="rounded-full bg-ink-700 text-white px-4 py-2 text-sm whitespace-nowrap" type="submit">生成已付订单并预占库存</button>
+      </form>
+      <form method="post" action="/admin/orders/run-cycle" onsubmit="return confirm('确认要把本周所有已锁单订单推进到分拣中吗？')">
+        <input type="hidden" name="action" value="packing_locked">
+        <button class="rounded-full bg-matcha-500 text-white px-4 py-2 text-sm whitespace-nowrap" type="submit">本周锁单进入分拣</button>
+      </form>
+      <form method="post" action="/admin/orders/run-cycle" onsubmit="return confirm('确认要把已付款试用订阅转为正式订阅吗？')">
+        <input type="hidden" name="action" value="mark_trial_active">
+        <button class="rounded-full bg-white border border-black/10 px-4 py-2 text-sm whitespace-nowrap" type="submit">首单用户转正式订阅</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+  <a href="/admin/orders?status=locked" class="bg-white rounded-2xl p-4 block hover:bg-cream-100">
+    <div class="text-xs text-ink-400">待分拣</div>
+    <div class="text-2xl font-serif mt-1">{{ fulfilment_stats.locked or 0 }}</div>
+  </a>
+  <a href="/admin/orders?status=packing" class="bg-white rounded-2xl p-4 block hover:bg-cream-100">
+    <div class="text-xs text-ink-400">分拣中</div>
+    <div class="text-2xl font-serif mt-1">{{ fulfilment_stats.packing or 0 }}</div>
+  </a>
+  <a href="/admin/orders?status=shipped" class="bg-white rounded-2xl p-4 block hover:bg-cream-100">
+    <div class="text-xs text-ink-400">运输中</div>
+    <div class="text-2xl font-serif mt-1">{{ fulfilment_stats.shipped or 0 }}</div>
+  </a>
+  <a href="/admin/orders?status=delivered" class="bg-white rounded-2xl p-4 block hover:bg-cream-100">
+    <div class="text-xs text-ink-400">已签收</div>
+    <div class="text-2xl font-serif mt-1">{{ fulfilment_stats.delivered or 0 }}</div>
+  </a>
+  <a href="/admin/orders?status=cancelled" class="bg-white rounded-2xl p-4 block hover:bg-cream-100">
+    <div class="text-xs text-ink-400">已取消</div>
+    <div class="text-2xl font-serif mt-1">{{ fulfilment_stats.cancelled or 0 }}</div>
+  </a>
+</div>
+
+{# 订阅状态 + 收入 #}
+<div class="grid md:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-2xl p-5">
+    <div class="text-xs text-ink-400 uppercase">本周收入（首单 + 续费）</div>
+    <div class="flex items-end gap-1 mt-1">
+      <div class="text-3xl font-serif">¥{{ "%.0f" | format((revenue.first_rev or 0) + (revenue.recur_rev or 0)) }}</div>
+    </div>
+    <div class="text-xs text-ink-400 mt-2">
+      首单 ¥{{ "%.0f" | format(revenue.first_rev or 0) }} · 续费 ¥{{ "%.0f" | format(revenue.recur_rev or 0) }}
+    </div>
+  </div>
+  <div class="bg-white rounded-2xl p-5">
+    <div class="text-xs text-ink-400 uppercase">已付款订阅</div>
+    <div class="text-3xl font-serif mt-1 text-matcha-500">{{ sub_stats.paid or 0 }}</div>
+  </div>
+  <div class="bg-white rounded-2xl p-5">
+    <div class="text-xs text-ink-400 uppercase">未付款</div>
+    <div class="text-3xl font-serif mt-1 text-peach-500">{{ sub_stats.unpaid or 0 }}</div>
+  </div>
+  <div class="bg-white rounded-2xl p-5">
+    <div class="text-xs text-ink-400 uppercase">已取消</div>
+    <div class="text-3xl font-serif mt-1 text-ink-400">{{ sub_stats.cancelled or 0 }}</div>
+  </div>
+</div>
+
+{% if stats %}
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+  {% for s in stats %}
+    <div class="bg-white rounded-2xl p-5">
+      <div class="text-xs text-ink-400">{{ {'fatloss_gi':'控糖轻盈','antiox':'熬夜抗氧','prenatal':'孕产温和'}.get(s.plan_code, s.plan_code) }}</div>
+      <div class="flex items-end gap-2 mt-1">
+        <div class="text-3xl font-serif">{{ s.orders }}</div>
+        <div class="text-sm text-ink-400 pb-1">配单</div>
+      </div>
+      <div class="text-xs text-ink-400 mt-2">水果 ¥{{ s.total_cost }} · 均单 ¥{{ s.avg_cost }} · 履约 ¥{{ s.avg_ops_cost }}/单</div>
+      <div class="text-xs mt-1 {% if s.contribution < 0 %}text-peach-500{% else %}text-matcha-600{% endif %}">
+        按续费价预估贡献毛利 ¥{{ s.contribution }}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="bg-white rounded-2xl overflow-hidden mb-8">
+  <div class="px-4 py-4 border-b border-black/5 flex items-center justify-between">
+    <div>
+      <div class="text-xs text-ink-400">履约管理</div>
+      <div class="text-lg font-serif mt-1">订单履约</div>
+    </div>
+    <div class="text-xs text-ink-400">最多显示最近 120 单</div>
+  </div>
+  <form method="get" class="px-4 py-4 border-b border-black/5 flex flex-wrap items-end gap-3">
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">状态</span>
+      <select name="status" class="rounded-xl border border-black/10 px-3 py-2 text-sm">
+        <option value="open" {% if filters.status == 'open' %}selected{% endif %}>待处理</option>
+        <option value="all" {% if filters.status == 'all' %}selected{% endif %}>全部</option>
+        {% for st in order_statuses %}
+          <option value="{{ st }}" {% if filters.status == st %}selected{% endif %}>{{ status_labels[st] }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">健康方向</span>
+      <select name="plan" class="rounded-xl border border-black/10 px-3 py-2 text-sm">
+        <option value="" {% if not filters.plan %}selected{% endif %}>全部方向</option>
+        <option value="fatloss_gi" {% if filters.plan == 'fatloss_gi' %}selected{% endif %}>减脂控糖</option>
+        <option value="antiox" {% if filters.plan == 'antiox' %}selected{% endif %}>抗氧轻食</option>
+        <option value="prenatal" {% if filters.plan == 'prenatal' %}selected{% endif %}>孕产营养</option>
+      </select>
+    </label>
+    <label class="block">
+      <span class="block text-xs text-ink-400 mb-1">手机号</span>
+      <input name="q" value="{{ filters.q }}" placeholder="完整或部分手机号"
+             class="w-56 rounded-xl border border-black/10 px-3 py-2 text-sm">
+    </label>
+    <button class="rounded-xl bg-ink-700 text-white px-4 py-2 text-sm" type="submit">筛选</button>
+    <a class="text-sm text-ink-400 hover:text-ink-700" href="/admin/orders">重置</a>
+  </form>
+  <div class="overflow-x-auto">
+  <table class="w-full min-w-[1180px] text-sm">
+    <thead class="bg-cream-100 text-ink-400 text-xs">
+      <tr>
+        <th class="text-left px-4 py-3 w-32">用户</th>
+        <th class="text-left px-4 py-3 w-36">周期</th>
+        <th class="text-left px-4 py-3">水果</th>
+        <th class="text-right px-4 py-3 w-28">毛利</th>
+        <th class="text-left px-4 py-3 w-56">库存 / 物流</th>
+        <th class="text-left px-4 py-3 w-40">状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in fulfilments %}
+      <tr class="border-t border-black/5 align-top">
+        <td class="px-4 py-3 font-mono text-xs">{{ o.phone_masked }}</td>
+        <td class="px-4 py-3 text-xs">{{ o.iso_year }} 第 {{ o.iso_week }} 周<br><span class="text-ink-400">{{ {'fatloss_gi':'控糖轻盈','antiox':'熬夜抗氧','prenatal':'孕产温和'}.get(o.plan_code, o.plan_code) }}</span></td>
+        <td class="px-4 py-3 text-xs">{{ o.items_short or "—" }}</td>
+        <td class="px-4 py-3 text-right text-xs">
+          <div class="font-mono
+            {% if o.margin_state == 'bad' %}text-peach-500
+            {% elif o.margin_state == 'warn' %}text-amber-600
+            {% else %}text-matcha-600{% endif %}">
+            ¥{{ '%.1f' % o.estimated_margin_cny }}
+          </div>
+          <div class="text-ink-400">水果 {{ '%.1f' % o.fruit_cost_pct }}%</div>
+        </td>
+        <td class="px-4 py-3 text-xs">
+          <div class="mb-2 text-ink-400">预占 {{ o.reserved_g }}g{% if o.auto_locked %} · 自动锁单{% endif %}</div>
+          <form method="post" action="/admin/orders/{{ o.id }}/status" class="flex flex-col gap-2">
+            <input type="hidden" name="status" value="{{ o.status }}">
+            <input class="border border-black/10 rounded-lg px-2 py-1" name="carrier_code" placeholder="承运方" value="{{ o.carrier_code or '' }}">
+            <input class="border border-black/10 rounded-lg px-2 py-1" name="tracking_no" placeholder="单号" value="{{ o.tracking_no or '' }}">
+            <button class="rounded-lg bg-ink-700 text-white px-3 py-1.5 text-xs hover:bg-black" type="submit">保存物流</button>
+          </form>
+        </td>
+        <td class="px-4 py-3">
+          <form method="post" action="/admin/orders/{{ o.id }}/status" class="flex flex-col gap-2">
+            <span class="inline-block w-fit px-2 py-0.5 rounded-full text-xs
+              {% if o.status == 'locked' %}bg-cream-100 text-ink-500
+              {% elif o.status == 'packing' %}bg-berry-500/10 text-berry-500
+              {% elif o.status == 'shipped' %}bg-matcha-500/10 text-matcha-600
+              {% elif o.status == 'delivered' %}bg-matcha-500/10 text-matcha-600
+              {% else %}bg-black/5 text-ink-400{% endif %}">{{ o.status_label }}</span>
+            <input type="hidden" name="carrier_code" value="{{ o.carrier_code or '' }}">
+            <input type="hidden" name="tracking_no" value="{{ o.tracking_no or '' }}">
+            <select name="status" class="border border-black/10 rounded-lg px-2 py-1">
+              {% for st in order_statuses %}
+                <option value="{{ st }}" {% if st == o.status %}selected{% endif %}>{{ status_labels[st] }}</option>
+              {% endfor %}
+            </select>
+            <button class="rounded-lg bg-matcha-500 text-white px-3 py-1.5 text-xs" type="submit">更新状态</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center py-12 text-ink-400">还没有已锁单订单</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="bg-white rounded-2xl overflow-hidden">
+  <div class="px-4 py-4 border-b border-black/5">
+    <div class="text-xs text-ink-400">配单记录</div>
+    <div class="text-lg font-serif mt-1">本周配单汇总</div>
+  </div>
+  <div class="overflow-x-auto">
+  <table class="w-full min-w-[1240px] text-sm">
+    <thead class="bg-cream-100 text-ink-400 text-xs">
+      <tr>
+        <th class="text-left px-4 py-3 w-32">用户</th>
+        <th class="text-left px-4 py-3 w-36">健康方向</th>
+        <th class="text-center px-4 py-3 w-36">付款状态</th>
+        <th class="text-left px-4 py-3">配单</th>
+        <th class="text-right px-4 py-3 w-28">水果成本</th>
+        <th class="text-right px-4 py-3 w-28">预估毛利</th>
+        <th class="text-right px-4 py-3 w-44">AI 调用</th>
+        <th class="text-center px-4 py-3 w-36">时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t border-black/5">
+        <td class="px-4 py-3 font-mono text-xs">{{ r.phone_masked }}</td>
+        <td class="px-4 py-3">{{ r.plan_name or r.plan_code }}</td>
+        <td class="px-4 py-3 text-center">
+          {% if r.billing_state == 'paid' %}
+            <span class="inline-block px-2 py-0.5 rounded-full bg-matcha-500/10 text-matcha-600 text-xs">已付 · 第 {{ r.charge_count }} 期</span>
+          {% elif r.billing_state == 'unpaid' %}
+            <span class="inline-block px-2 py-0.5 rounded-full bg-peach-500/10 text-peach-500 text-xs">未付款</span>
+          {% elif r.billing_state == 'cancelled' %}
+            <span class="inline-block px-2 py-0.5 rounded-full bg-black/5 text-ink-400 text-xs">已取消</span>
+          {% else %}
+            <span class="text-ink-400 text-xs">—</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-xs">{{ r.items_short }}<span class="text-ink-400"> · {{ r.item_count }} 种</span></td>
+        <td class="px-4 py-3 text-right font-mono">
+          ¥{{ '%.1f' % r.total_cost_cny }}
+          <div class="text-xs text-ink-400">{{ '%.1f' % r.fruit_cost_pct }}%</div>
+        </td>
+        <td class="px-4 py-3 text-right font-mono
+          {% if r.margin_state == 'bad' %}text-peach-500
+          {% elif r.margin_state == 'warn' %}text-amber-600
+          {% else %}text-matcha-600{% endif %}">
+          ¥{{ '%.1f' % r.estimated_margin_cny }}
+          <div class="text-xs text-ink-400">履约 ¥{{ '%.0f' % r.ops_cost_cny }}</div>
+        </td>
+        <td class="px-4 py-3 text-right font-mono text-xs text-ink-400">
+          输入 {{ r.tokens_in }} / 输出 {{ r.tokens_out }} · {{ r.latency_ms }}ms
+        </td>
+        <td class="px-4 py-3 text-center text-xs text-ink-400">{{ r.at }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="text-center py-12 text-ink-400">本周还没有配单</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}

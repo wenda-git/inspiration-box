@@ -1,0 +1,167 @@
+.login-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 0%, var(--vl-matcha-1) 0%, transparent 45%),
+    radial-gradient(circle at 80% 20%, var(--vl-peach-1) 0%, transparent 40%),
+    var(--vl-bg);
+  padding: 80rpx 40rpx calc(60rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 48rpx;
+}
+
+/* ========== Hero · 品牌 Logo ========== */
+.login-hero {
+  text-align: center;
+  padding-top: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+.login-logo {
+  width: 360rpx;
+  height: 200rpx;
+  display: block;
+}
+
+.login-brand {
+  font-family: var(--vl-font-serif);
+  font-size: 56rpx;
+  color: var(--vl-ink);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin-top: 8rpx;
+}
+.login-slogan {
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  letter-spacing: 0.12em;
+  margin-top: 2rpx;
+}
+
+/* ========== 欢迎语 ========== */
+.login-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+/* ========== 表单 ========== */
+.login-form {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20rpx);
+  border-radius: var(--vl-r-xl);
+  padding: 36rpx 32rpx;
+  box-shadow: 0 24rpx 48rpx rgba(120, 80, 40, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+.login-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.login-field-label {
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.login-input {
+  height: 88rpx;
+  padding: 0 24rpx;
+  background: var(--vl-card);
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-md);
+  font-size: 32rpx;
+  color: var(--vl-ink);
+  letter-spacing: 0.04em;
+  box-sizing: border-box;
+  transition: border-color 200ms var(--vl-ease), box-shadow 200ms var(--vl-ease);
+}
+.login-input:focus {
+  border-color: var(--vl-brand);
+  box-shadow: 0 0 0 6rpx rgba(107, 158, 95, 0.08);
+}
+
+.login-send-code {
+  font-size: 24rpx;
+  color: var(--vl-brand);
+  padding: 4rpx 8rpx;
+}
+.login-send-code-off {
+  color: var(--vl-ink-3);
+}
+
+/* ========== 主按钮 ========== */
+.login-btn {
+  width: 100%;
+  height: 104rpx;
+  border-radius: 999rpx;
+  background: var(--vl-ink);
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  box-shadow: 0 16rpx 32rpx rgba(43, 36, 32, 0.25);
+  transition: transform 180ms var(--vl-ease);
+}
+.login-btn::after { border: none; }
+.login-btn:active { transform: scale(0.98); }
+.login-btn[disabled] {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+/* ========== 底部协议 ========== */
+.login-footer {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  margin-top: auto;
+}
+.login-footer-link {
+  color: var(--vl-ink);
+  text-decoration: underline;
+  text-underline-offset: 3rpx;
+}
+
+.login-page {
+  position: relative;
+  overflow: hidden;
+}
+.login-bg-deco {
+  position: absolute;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+.login-bg-deco-1 {
+  width: 240rpx; height: 240rpx;
+  top: 40rpx; left: -40rpx;
+  transform: rotate(-14deg);
+}
+.login-bg-deco-2 {
+  width: 200rpx; height: 200rpx;
+  bottom: 160rpx; right: -30rpx;
+  transform: rotate(18deg);
+}
+.login-hero, .login-intro, .login-form, .login-btn, .login-footer {
+  position: relative;
+  z-index: 1;
+}

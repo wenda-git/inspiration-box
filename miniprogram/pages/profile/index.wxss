@@ -1,0 +1,251 @@
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx 32rpx;
+}
+.menu-icon {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vl-brand-1);
+  border-radius: 50%;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+.menu-divider {
+  height: 1rpx;
+  background: var(--vl-line);
+  margin-left: 88rpx;
+}
+
+/* 订阅成就 */
+.milestone-row {
+  display: flex;
+  gap: 20rpx;
+  align-items: flex-start;
+}
+.milestone-icon {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--vl-brand-1);
+}
+.milestone-icon.locked {
+  background: var(--vl-bg-soft);
+  filter: grayscale(1) opacity(0.5);
+}
+.milestone-label {
+  font-size: 28rpx;
+  color: var(--vl-ink);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.milestone-badge {
+  font-size: 20rpx;
+  color: var(--vl-brand);
+  background: var(--vl-brand-1);
+  padding: 2rpx 10rpx;
+  border-radius: var(--vl-r-pill);
+}
+.milestone-countdown {
+  font-size: 20rpx;
+  color: var(--vl-ink-2);
+}
+.milestone-reward {
+  font-size: 24rpx;
+  color: var(--vl-ink-1);
+  margin-top: 6rpx;
+  line-height: 1.5;
+}
+.milestone-reward.locked {
+  color: var(--vl-ink-3);
+}
+
+/* 换方向弹层（复用 app.wxss 的 q-mask 如果有，但 profile 不继承；这里补上） */
+.q-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64rpx;
+  box-sizing: border-box;
+}
+.direction-card {
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 40rpx 32rpx;
+  width: 100%;
+  max-width: 600rpx;
+}
+.direction-opt {
+  background: var(--vl-bg-soft);
+  border-radius: 999rpx;
+  padding: 28rpx 32rpx;
+  text-align: center;
+  font-size: 30rpx;
+  color: var(--vl-ink);
+  font-weight: 500;
+  transition: all 160ms var(--vl-ease);
+}
+.direction-opt:active { transform: scale(0.98); }
+.direction-opt-current {
+  background: var(--vl-ink);
+  color: #FFFFFF;
+}
+
+/* 新版菜单图标（SVG） */
+.menu-icon-svg {
+  width: 44rpx;
+  height: 44rpx;
+  margin: 6rpx 6rpx 6rpx 0;
+  flex-shrink: 0;
+  color: var(--vl-ink-1);
+}
+
+/* 个人头像：CSS 画的，非 emoji */
+.profile-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--vl-matcha) 0%, #4C8542 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 12rpx 24rpx rgba(107, 158, 95, 0.3);
+}
+.profile-avatar-inner {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  position: relative;
+}
+.profile-avatar-inner::before {
+  content: '';
+  position: absolute;
+  inset: 12rpx;
+  border-radius: 50%;
+  background: var(--vl-matcha);
+}
+
+/* 口味档案 */
+.pref-mini-btn {
+  height: 58rpx;
+  line-height: 58rpx;
+  padding: 0 22rpx;
+  margin: 0;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-brand-1);
+  color: var(--vl-brand);
+  font-size: 24rpx;
+  font-weight: 700;
+}
+.pref-mini-btn::after {
+  border: none;
+}
+.preference-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+}
+.preference-card {
+  position: relative;
+  background: var(--vl-card-2);
+  border-radius: var(--vl-r-md);
+  padding: 24rpx 20rpx 22rpx;
+  min-height: 176rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.preference-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: var(--vl-brand);
+  margin-bottom: 14rpx;
+}
+.preference-avoid .preference-dot {
+  background: var(--vl-danger);
+}
+.preference-fresh .preference-dot {
+  background: var(--vl-berry);
+}
+.preference-amount .preference-dot {
+  background: var(--vl-peach);
+}
+.preference-title {
+  font-size: 27rpx;
+  color: var(--vl-ink);
+  font-weight: 700;
+  line-height: 1.35;
+}
+.preference-detail {
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: var(--vl-ink-1);
+  line-height: 1.45;
+}
+.preference-meta {
+  margin-top: 12rpx;
+  font-size: 20rpx;
+  color: var(--vl-ink-2);
+  font-family: var(--vl-font-mono);
+}
+.preference-empty {
+  background: var(--vl-card-2);
+  border-radius: var(--vl-r-md);
+  padding: 28rpx 24rpx;
+}
+.preference-empty-title {
+  font-size: 28rpx;
+  color: var(--vl-ink);
+  font-weight: 700;
+}
+.preference-empty-text {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: var(--vl-ink-2);
+  line-height: 1.55;
+}
+
+.menu-icon-dot {
+  width: 44rpx;
+  height: 44rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--vl-brand-1);
+  position: relative;
+}
+.menu-icon-dot::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--vl-brand);
+}
+
+/* 里程碑圆图标占位（没有 emoji 了） */
+.milestone-icon {
+  background: var(--vl-brand-1);
+}
+.milestone-icon.unlocked {
+  background: var(--vl-brand);
+}

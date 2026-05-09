@@ -1,0 +1,52 @@
+<view class="{{'theme-' + theme}} paid-page">
+
+  <view wx:if="{{loading}}" class="stack-4 page-padding">
+    <view class="skeleton" style="height: 320rpx;"></view>
+    <view class="skeleton" style="height: 160rpx;"></view>
+  </view>
+
+  <block wx:else>
+    <!-- 大胜利卡 -->
+    <view class="paid-hero">
+      <image class="paid-illustration" src="{{assetBase}}/illustrations/success-subscription.png" mode="aspectFit"/>
+      <view class="paid-label">订阅已开通</view>
+      <view class="paid-title">欢迎来到<text class="t-serif" style="font-style: italic;"> 灵感果仓</text></view>
+      <view class="paid-sub">「{{planName}}」方向 · 从这周开始</view>
+    </view>
+
+    <!-- 下一步 -->
+    <view class="paid-ship">
+      <view class="paid-ship-icon">
+        <image style="width: 44rpx; height: 44rpx;" src="{{assetBase}}/icons/truck.svg" mode="aspectFit"/>
+      </view>
+      <view class="grow">
+        <view class="t-label">下一步</view>
+        <view class="t-h3 t-serif" style="margin-top: 4rpx;">本周果箱已锁定</view>
+        <view class="t-caption" style="margin-top: 2rpx;">预计 {{shipDayText}} 发货 · 签收后反馈会影响下周</view>
+      </view>
+    </view>
+
+    <!-- 本周亮点水果 -->
+    <view wx:if="{{highlights.length}}" class="paid-highlights">
+      <view class="t-label">本周为你挑了</view>
+      <view class="paid-highlight-row">
+        <view
+          wx:for="{{highlights}}" wx:key="fruit_name_cn"
+          class="paid-highlight-item"
+        >
+          <view class="paid-highlight-emoji">{{item.emoji}}</view>
+          <view class="paid-highlight-name">{{item.fruit_name_cn}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 两个 CTA -->
+    <view class="paid-ctas">
+      <button class="btn btn-primary btn-block" bindtap="onGoWeekly">查看本周果箱 ›</button>
+      <button class="btn btn-ghost btn-block" bindtap="onSubscribeMessages">开启发货提醒</button>
+      <button class="btn btn-ghost btn-block" open-type="share">分享给朋友</button>
+    </view>
+
+  </block>
+
+</view>

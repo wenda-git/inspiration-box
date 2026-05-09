@@ -1,0 +1,4 @@
+{
+  "desc": "Learn more at https://developers.weixin.qq.com/miniprogram/dev/framework/sitemap.html",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

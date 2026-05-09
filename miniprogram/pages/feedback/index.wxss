@@ -1,0 +1,223 @@
+button[disabled] {
+  opacity: 0.36;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--vl-ink);
+  background: var(--vl-card);
+  border-radius: var(--vl-r-md);
+  border: 1rpx solid var(--vl-line);
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 空状态引导 */
+.empty-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 0;
+  gap: 24rpx;
+}
+.empty-arrow {
+  font-size: 64rpx;
+  color: var(--vl-ink-3);
+  animation: vl-bounce 1400ms var(--vl-ease) infinite;
+}
+@keyframes vl-bounce {
+  0%, 100% { transform: translateY(-8rpx); opacity: 0.4; }
+  50%      { transform: translateY(0);     opacity: 0.8; }
+}
+
+/* 水果横向选择 */
+.fruit-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+.fruit-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.fruit-scroll-inner {
+  display: inline-flex;
+  gap: 18rpx;
+  padding: 2rpx 2rpx 8rpx;
+}
+.fruit-choice {
+  width: 178rpx;
+  min-height: 210rpx;
+  background: #FFFFFF;
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-lg);
+  padding: 22rpx 16rpx;
+  box-sizing: border-box;
+  text-align: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 160ms var(--vl-ease);
+}
+.fruit-choice:active {
+  transform: scale(0.97);
+}
+.fruit-choice-on {
+  background: var(--vl-matcha-1);
+  border-color: var(--vl-matcha);
+  box-shadow: var(--vl-shadow-md);
+}
+.fruit-choice-emoji {
+  font-size: 58rpx;
+  line-height: 1.1;
+}
+.fruit-choice-name {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: var(--vl-ink);
+  font-weight: 600;
+  white-space: normal;
+  line-height: 1.25;
+}
+.fruit-choice-qty {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: var(--vl-ink-2);
+  font-family: var(--vl-font-mono);
+}
+
+/* 轻反馈面板 */
+.feedback-panel {
+  background: #FFFFFF;
+  border-radius: var(--vl-r-xl);
+  padding: 30rpx;
+  box-shadow: var(--vl-shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+.selected-fruit {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  background: var(--vl-card-2);
+  border-radius: var(--vl-r-md);
+  padding: 18rpx 20rpx;
+}
+.selected-emoji {
+  width: 66rpx;
+  height: 66rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+}
+.selected-title {
+  font-size: 30rpx;
+  color: var(--vl-ink);
+  font-weight: 700;
+}
+.selected-sub {
+  margin-top: 2rpx;
+  font-size: 23rpx;
+  color: var(--vl-ink-2);
+}
+.feedback-label {
+  font-size: 24rpx;
+  color: var(--vl-ink-2);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 14rpx;
+}
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14rpx;
+}
+.mood-card {
+  height: 92rpx;
+  border-radius: var(--vl-r-md);
+  background: var(--vl-card-2);
+  border: 1rpx solid var(--vl-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vl-ink);
+}
+.mood-card-on {
+  background: var(--vl-ink);
+  color: #FFFFFF;
+}
+.mood-title {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+.issue-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+.issue-chip {
+  height: 62rpx;
+  padding: 0 22rpx;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-card-2);
+  border: 1rpx solid var(--vl-line);
+  color: var(--vl-ink-1);
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+}
+.issue-chip-on {
+  background: var(--vl-matcha-1);
+  border-color: var(--vl-matcha);
+  color: var(--vl-matcha);
+  font-weight: 700;
+}
+.quick-textarea {
+  width: 100%;
+  height: 150rpx;
+  box-sizing: border-box;
+  background: var(--vl-card-2);
+  border: 1rpx solid var(--vl-line);
+  border-radius: var(--vl-r-md);
+  padding: 22rpx 24rpx;
+  color: var(--vl-ink);
+  font-size: 28rpx;
+  line-height: 1.55;
+}
+.photo-box {
+  background: var(--vl-card-2);
+  border-radius: var(--vl-r-md);
+  padding: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+.photo-preview-row {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+.photo-preview {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+}
+.feedback-submit {
+  width: 100%;
+  height: 100rpx;
+  border-radius: var(--vl-r-pill);
+  background: var(--vl-ink);
+  color: var(--vl-bg);
+  font-size: 30rpx;
+  font-weight: 700;
+}
+.feedback-submit::after {
+  border: none;
+}
