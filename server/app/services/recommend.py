@@ -22,8 +22,43 @@ from app.services.selector import SelectedItem
 
 logger = logging.getLogger(__name__)
 
-_PROMPT_PATH = Path(__file__).resolve().parents[2].parent / "prompts" / "write_copy.md"
-_SYSTEM_PROMPT = _PROMPT_PATH.read_text(encoding="utf-8")
+_PROMPT_PATHS = [
+    Path(__file__).resolve().parents[2].parent / "prompts" / "write_copy.md",
+    Path(__file__).resolve().parents[3] / "prompts" / "write_copy.md",
+    Path("/prompts/write_copy.md"),
+]
+_DEFAULT_SYSTEM_PROMPT = """
+你是「灵感果仓」的首席营养顾问。选品、配量、营养计算、预算全部由系统完成。
+你的工作是为每个水果写一句具体原因、生成本周食用建议、生成一句温和的问候语，并排一份 7 天食用计划。
+
+要求：
+- 不允许修改任何水果、克重、价格、营养数字。
+- 所有给用户看的水果名称必须使用中文名，不要输出 fruit_code。
+- 语气像懂营养的朋友，克制、具体，不使用「亲」「哦」「呢」「家人们」「姐妹们」。
+- 不要输出 emoji。
+- reason 必须包含一个具体营养数字，并结合用户画像。
+- daily_plan 必须覆盖周一到周日，每天用几个、几片、一小把这类自然表达，不强调精确克重。
+- guide_md 使用 Markdown，包含最佳食用时段、每种水果吃法建议、小贴士。
+
+严格输出 JSON：
+{
+  "items": [{"fruit_code": "xxx", "reason": "..."}],
+  "guide_md": "...",
+  "greeting": "...",
+  "daily_plan": [{"day": "周一", "items": "...", "tip": "..."}]
+}
+"""
+
+
+def _load_system_prompt() -> str:
+    for path in _PROMPT_PATHS:
+        if path.exists():
+            return path.read_text(encoding="utf-8")
+    logger.warning("write_copy prompt file not found; using built-in fallback prompt")
+    return _DEFAULT_SYSTEM_PROMPT
+
+
+_SYSTEM_PROMPT = _load_system_prompt()
 
 _async_client = AsyncOpenAI()
 
