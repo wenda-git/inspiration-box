@@ -36,5 +36,8 @@ secrets/
 *.log
 logs/
 
+# 本地云托管部署包
+/inspiration-box-cloudrun.zip
+
 # 用户上传文件
 server/uploads/

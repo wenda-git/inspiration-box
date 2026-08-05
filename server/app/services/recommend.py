@@ -60,7 +60,15 @@ def _load_system_prompt() -> str:
 
 _SYSTEM_PROMPT = _load_system_prompt()
 
-_async_client = AsyncOpenAI()
+_async_client: AsyncOpenAI | None = None
+
+
+def _get_async_client() -> AsyncOpenAI:
+    """按需创建客户端，避免未配置 API Key 时阻止整个服务启动。"""
+    global _async_client
+    if _async_client is None:
+        _async_client = AsyncOpenAI()
+    return _async_client
 
 
 def _build_input(
@@ -167,7 +175,7 @@ async def write_copy(
 
     t0 = time.perf_counter()
     try:
-        response = await _async_client.chat.completions.create(
+        response = await _get_async_client().chat.completions.create(
             model=model,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT},

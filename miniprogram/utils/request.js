@@ -10,6 +10,35 @@ const auth = require('./auth.js');
 
 const app = getApp();
 
+function handleResponse(res, { silent, resolve, reject }) {
+  if (res.statusCode >= 200 && res.statusCode < 300) {
+    resolve(res.data);
+    return;
+  }
+
+  const detail = (res.data && res.data.detail) || {};
+  const code = detail.code || `HTTP_${res.statusCode}`;
+  const message = detail.message || res.errMsg || '请求失败';
+
+  if (res.statusCode === 401) {
+    auth.clearSession();
+    reject({ code, message, status: 401 });
+    return;
+  }
+  if (!silent) {
+    wx.showToast({ title: message, icon: 'none' });
+  }
+  reject({ code, message, status: res.statusCode });
+}
+
+function handleNetworkError(err, { silent, reject }) {
+  if (!silent) wx.showToast({ title: '网络异常', icon: 'none' });
+  reject({
+    code: 'NETWORK',
+    message: (err && err.errMsg) || '网络异常',
+  });
+}
+
 function uuid() {
   // 微信小程序里 crypto.getRandomValues 可用时用它；否则降级到 Math.random
   // 这个 key 会写进 payments.idempotency_key（UNIQUE），防碰撞重要
@@ -30,8 +59,6 @@ function uuid() {
 }
 
 function request({ url, method = 'GET', data, headers = {}, silent = false, timeout } = {}) {
-  const fullUrl = url.startsWith('http') ? url : app.globalData.apiBase + url;
-
   const h = { 'Content-Type': 'application/json', ...headers };
   const token = auth.getToken();
   if (token) h['Authorization'] = `Bearer ${token}`;
@@ -40,34 +67,40 @@ function request({ url, method = 'GET', data, headers = {}, silent = false, time
   }
 
   return new Promise((resolve, reject) => {
+    const callbacks = { silent, resolve, reject };
+
+    if (app.globalData.useCloudContainer && !url.startsWith('http')) {
+      if (!wx.cloud) {
+        handleNetworkError(
+          { errMsg: '当前基础库不支持 wx.cloud' },
+          callbacks,
+        );
+        return;
+      }
+      wx.cloud.callContainer({
+        config: { env: app.globalData.cloudEnvId },
+        path: url,
+        method,
+        data,
+        header: {
+          ...h,
+          'X-WX-SERVICE': app.globalData.cloudService,
+        },
+        success: (res) => handleResponse(res, callbacks),
+        fail: (err) => handleNetworkError(err, callbacks),
+      });
+      return;
+    }
+
+    const fullUrl = url.startsWith('http') ? url : app.globalData.apiBase + url;
     wx.request({
       url: fullUrl,
       method,
       data,
       header: h,
       timeout,
-      success(res) {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          return resolve(res.data);
-        }
-        const detail = (res.data && res.data.detail) || {};
-        const code = detail.code || `HTTP_${res.statusCode}`;
-        const message = detail.message || res.errMsg || '请求失败';
-
-        if (res.statusCode === 401) {
-          auth.clearSession();
-          // 游客模式：不强制跳登录，由上层页面决定如何引导
-          return reject({ code, message, status: 401 });
-        }
-        if (!silent) {
-          wx.showToast({ title: message, icon: 'none' });
-        }
-        reject({ code, message, status: res.statusCode });
-      },
-      fail(err) {
-        if (!silent) wx.showToast({ title: '网络异常', icon: 'none' });
-        reject({ code: 'NETWORK', message: err.errMsg });
-      },
+      success: (res) => handleResponse(res, callbacks),
+      fail: (err) => handleNetworkError(err, callbacks),
     });
   });
 }

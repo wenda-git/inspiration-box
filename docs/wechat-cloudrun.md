@@ -4,28 +4,13 @@
 
 ## 1. 部署前准备
 
-云托管不能连接你电脑里的 Docker Postgres。先准备一个云上 PostgreSQL，并把本地迁移 SQL 跑到云数据库：
+云托管不能连接你电脑里的 Docker Postgres。云开发控制台“数据库”页面是集合数据库，
+也不能直接运行本项目的 PostgreSQL SQL。请先准备一个云上 PostgreSQL，并按仓库实际文件顺序执行迁移：
 
 ```bash
-psql "$DATABASE_URL" -f server/migrations/001_init.sql
-psql "$DATABASE_URL" -f server/migrations/002_auth_and_addresses.sql
-psql "$DATABASE_URL" -f server/migrations/003_profile_and_subscription.sql
-psql "$DATABASE_URL" -f server/migrations/004_weekly_cache.sql
-psql "$DATABASE_URL" -f server/migrations/005_catalog.sql
-psql "$DATABASE_URL" -f server/migrations/006_admin.sql
-psql "$DATABASE_URL" -f server/migrations/007_more_fruits.sql
-psql "$DATABASE_URL" -f server/migrations/008_feedbacks.sql
-psql "$DATABASE_URL" -f server/migrations/009_feedback_signals.sql
-psql "$DATABASE_URL" -f server/migrations/010_payment.sql
-psql "$DATABASE_URL" -f server/migrations/011_addresses_region.sql
-psql "$DATABASE_URL" -f server/migrations/012_orders.sql
-psql "$DATABASE_URL" -f server/migrations/013_admin_password.sql
-psql "$DATABASE_URL" -f server/migrations/014_admin_metrics.sql
-psql "$DATABASE_URL" -f server/migrations/015_preference_signals.sql
-psql "$DATABASE_URL" -f server/migrations/016_share_reports.sql
-psql "$DATABASE_URL" -f server/migrations/017_operations_backbone.sql
-psql "$DATABASE_URL" -f server/migrations/018_margin_pricing.sql
-psql "$DATABASE_URL" -f server/migrations/019_fruit_operating_controls.sql
+for migration_file in server/migrations/*.sql; do
+  psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$migration_file" || exit 1
+done
 ```
 
 ## 2. 云托管环境变量
@@ -33,7 +18,7 @@ psql "$DATABASE_URL" -f server/migrations/019_fruit_operating_controls.sql
 在云托管服务的环境变量里配置：
 
 ```env
-APP_ENV=dev
+APP_ENV=production
 PORT=8000
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DBNAME
 JWT_SECRET=请重新生成
@@ -74,7 +59,10 @@ ADMIN_SESSION_SECRET=请重新生成
 - 部署目录：`server/`
 - 构建方式：Dockerfile
 - 监听端口：`8000` 或环境变量 `PORT`
-- 健康检查路径可用：`/v1/plans`
+- 健康检查路径：`/healthz`
+- 云开发环境 ID：`cloud1-d9g11sc8o22b23a2e`
+- 建议服务名：`inspiration-box-api`
+- 调试阶段可把最小实例数设为 0；需要稳定响应时设为 1
 
 本地验证构建：
 
@@ -91,19 +79,27 @@ const ENV = 'cloud';
 
 const CONFIG = {
   cloud: {
-    apiBase: 'https://你的云托管域名',
+    transport: 'cloud-container',
+    cloudEnvId: 'cloud1-d9g11sc8o22b23a2e',
+    cloudService: 'inspiration-box-api',
+    cloudPublicBase: 'https://云托管控制台复制的公网访问地址',
   },
 };
 ```
 
-`assetBase` 会自动变成：
+业务 API 会通过 `wx.cloud.callContainer` 访问，不需要配置 request 合法域名。
+静态图片仍通过公网 HTTPS 入口加载，`assetBase` 会自动变成：
 
 ```text
-https://你的云托管域名/v1/assets
+https://云托管公网访问地址/v1/assets
 ```
 
 ## 5. 微信后台配置
 
-如果使用 `wx.request` 调云托管公网域名，需要在小程序后台把云托管域名加入 request 合法域名。
+当前小程序和云开发环境属于同一个 AppID，不需要开启“环境共享”。只有跨小程序复用环境时才开环境共享。
 
 OSS Bucket 保持私有即可，小程序不直接访问裸 OSS 地址，而是访问后端 `/v1/assets/...`。
+真机加载 `<image>` 时，需要在小程序后台的 `downloadFile 合法域名` 中同时添加：
+
+- 云托管公网 HTTPS 域名；
+- OSS HTTPS 域名（后端图片接口会 302 跳转到签名后的 OSS 地址）。

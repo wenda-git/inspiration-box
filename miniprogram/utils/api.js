@@ -53,6 +53,28 @@ async function submitFeedback(payload) {
 
 async function uploadFeedbackPhoto(filePath) {
   const app = getApp();
+
+  // 云开发模式直接存云存储，避免为 multipart 上传额外开放公网接口。
+  if (app.globalData.useCloudContainer) {
+    const suffixMatch = String(filePath || '').match(/\.([a-zA-Z0-9]+)(?:\?.*)?$/);
+    const suffix = suffixMatch ? suffixMatch[1].toLowerCase() : 'jpg';
+    const cloudPath = `feedback/${Date.now()}-${Math.random().toString(16).slice(2)}.${suffix}`;
+    try {
+      const result = await wx.cloud.uploadFile({ cloudPath, filePath });
+      return {
+        url: result.fileID,
+        fileID: result.fileID,
+        content_type: `image/${suffix === 'jpg' ? 'jpeg' : suffix}`,
+      };
+    } catch (err) {
+      wx.showToast({ title: '照片上传失败', icon: 'none' });
+      throw {
+        code: 'UPLOAD_FAILED',
+        message: (err && err.errMsg) || '照片上传失败',
+      };
+    }
+  }
+
   const token = auth.getToken();
   return new Promise((resolve, reject) => {
     wx.uploadFile({
